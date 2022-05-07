@@ -55,7 +55,7 @@ def validate(hw_model, criterion, valid_loader, device):
             log_probs = F.log_softmax(logits, dim=2)
             length_outputs = torch.LongTensor([logits.size(0)] * batch_size)
 
-            loss = criterion(logits, label)
+            loss = criterion(log_probs, labels, length_outputs, length_labels)
             valid_running_loss += loss.item()
 
         valid_loss = valid_running_loss
@@ -116,7 +116,7 @@ def train_hw_recognizer(FLAGS):
                 round(valid_loss, 6),
             ]
         )
-        torch.save(model.state_dict(), os.path.join(dir_model, f"{FLAGS.which_hw_model}_{epoch}.pth"))
+        torch.save(hw_model.state_dict(), os.path.join(dir_model, f"{FLAGS.which_hw_model}_{epoch}.pth"))
     print(f"Training of handwriting recognition model {FLAGS.which_hw_model} complete!!!!")
     csv_writer.close()
     return
