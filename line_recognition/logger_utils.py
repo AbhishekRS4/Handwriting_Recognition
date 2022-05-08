@@ -1,4 +1,10 @@
 import csv
+import json
+
+def write_json_file(file_json, dict_data):
+    with open(file_json, "w", encoding="utf-8") as fh:
+        fh.write(json.dumps(dict_data, indent=4))
+    return
 
 class CSVWriter:
     """

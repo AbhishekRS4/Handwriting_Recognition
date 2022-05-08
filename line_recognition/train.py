@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from model_crnn import CRNN
-from logger_utils import CSVWriter
+from logger_utils import CSVWriter, write_json_file
 from dataset import HWRecogIAMDataset, split_dataset, get_dataloaders_for_training
 
 
@@ -64,6 +64,7 @@ def validate(hw_model, criterion, valid_loader, device):
 def train_hw_recognizer(FLAGS):
     file_txt_labels = os.path.join(FLAGS.dir_dataset, "iam_lines_gt.txt")
     dir_images = os.path.join(FLAGS.dir_dataset, "img")
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
     if torch.cuda.is_available():
         device = torch.device("cuda")
@@ -90,6 +91,9 @@ def train_hw_recognizer(FLAGS):
         file_name=file_logger_train,
         column_names=["epoch", "loss_train", "loss_valid"]
     )
+
+    file_params = os.path.join(dir_model, "params.json")
+    write_json_file(file_params, vars(FLAGS))
 
     num_classes = len(HWRecogIAMDataset.LABEL_2_CHAR) + 1
     print(f"task - handwriting recognition")
@@ -125,12 +129,12 @@ def train_hw_recognizer(FLAGS):
     return
 
 def main():
-    learning_rate = 1e-4
+    learning_rate = 3e-5
     weight_decay = 1e-6
     batch_size = 64
-    num_epochs = 100
+    num_epochs = 50
     image_height = 64
-    image_width = 768
+    image_width = 256
     which_hw_model = "crnn"
     dir_dataset = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/"
 
