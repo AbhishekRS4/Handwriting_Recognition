@@ -1,13 +1,13 @@
 import os
 from PIL import Image, ImageFont, ImageDraw
 #creates path if folder habbakuk doesnt exist
-if not os.path.exists('C:/Users/MANUEL/Desktop/handwritten/habbakuk/'):
-        os.makedirs('C:/Users/MANUEL/Desktop/handwritten/habbakuk/')
+if not os.path.exists('path + /habbakuk/'):
+        os.makedirs('path + /habbakuk/')
         
 #path to pretrain
-path_pretrain_habbakuk="C:/Users/MANUEL/Desktop/handwritten/habbakuk"
+path_pretrain_habbakuk="path"
 #Load the font and set the font size to 42
-font = ImageFont.truetype('C:/Users/MANUEL/Desktop/handwritten/Habbakuk.ttf', 42)
+font = ImageFont.truetype('path + Habbakuk.ttf', 42)
 
 #Character mapping for each of the 27 tokens
 char_map = {'Alef' : ')', 
@@ -61,4 +61,4 @@ for character in list(char_map.keys()):
     img = create_image(character, (50, 50)) 
     #stores characters into folders
     os.mkdir(os.path.join(path, character)) 
-    img.save(f'C:/Users/MANUEL/Desktop/handwritten/habbakuk/{character}/example_{character}.png')
+    img.save(f'path + /habbakuk/{character}/example_{character}.png')
