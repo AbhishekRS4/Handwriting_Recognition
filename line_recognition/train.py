@@ -81,24 +81,27 @@ def train_hw_recognizer(FLAGS):
     )
 
     dir_model = f"model_{FLAGS.which_hw_model}"
-    file_logger_train = os.path.join(dir_model, "train_metrics.csv")
-
     if not os.path.isdir(dir_model):
         print(f"creating directory: {dir_model}")
         os.makedirs(dir_model)
 
+    file_logger_train = os.path.join(dir_model, "train_metrics.csv")
+    csv_writer = CSVWriter(
+        file_name=file_logger_train,
+        column_names=["epoch", "loss_train", "loss_valid"]
+    )
+
     num_classes = len(HWRecogIAMDataset.LABEL_2_CHAR) + 1
+    print(f"task - handwriting recognition")
+    print(f"model: {FLAGS.which_hw_model}")
+    print(f"learning rate: {FLAGS.learning_rate:.6f}, weight decay: {FLAGS.weight_decay:.6f}")
+    print(f"batch size : {FLAGS.batch_size}")
     print(f"num train samples: {num_train_samples}, num validation samples: {num_valid_samples}")
     hw_model = CRNN(num_classes, FLAGS.image_height)
     hw_model.to(device)
 
     optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate, weight_decay=FLAGS.weight_decay)
     criterion = nn.CTCLoss(reduction="sum", zero_infinity=True)
-
-    csv_writer = CSVWriter(
-        file_name=file_logger_train,
-        column_names=["epoch", "loss_train", "loss_valid"]
-    )
 
     print(f"training of handwriting recognition model {FLAGS.which_hw_model} started")
     for epoch in range(1, FLAGS.num_epochs+1):
