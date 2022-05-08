@@ -95,7 +95,7 @@ def train_hw_recognizer(FLAGS):
     print(f"task - handwriting recognition")
     print(f"model: {FLAGS.which_hw_model}")
     print(f"learning rate: {FLAGS.learning_rate:.6f}, weight decay: {FLAGS.weight_decay:.6f}")
-    print(f"batch size : {FLAGS.batch_size}")
+    print(f"batch size : {FLAGS.batch_size}, image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
     print(f"num train samples: {num_train_samples}, num validation samples: {num_valid_samples}")
     hw_model = CRNN(num_classes, FLAGS.image_height)
     hw_model.to(device)
