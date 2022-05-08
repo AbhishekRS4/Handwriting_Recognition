@@ -92,7 +92,7 @@ def train_hw_recognizer(FLAGS):
     hw_model = CRNN(num_classes, FLAGS.image_height)
     hw_model.to(device)
 
-    optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate)
+    optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate, weight_decay=FLAGS.weight_decay)
     criterion = nn.CTCLoss(reduction="sum", zero_infinity=True)
 
     csv_writer = CSVWriter(
@@ -122,8 +122,9 @@ def train_hw_recognizer(FLAGS):
     return
 
 def main():
-    learning_rate = 3e-4
-    batch_size = 32
+    learning_rate = 1e-4
+    weight_decay = 1e-6
+    batch_size = 64
     num_epochs = 100
     image_height = 64
     image_width = 768
@@ -136,6 +137,8 @@ def main():
 
     parser.add_argument("--learning_rate", default=learning_rate,
         type=float, help="learning rate to use for training")
+    parser.add_argument("--weight_decay", default=weight_decay,
+        type=float, help="weight decay to use for training")
     parser.add_argument("--batch_size", default=batch_size,
         type=int, help="batch size to use for training")
     parser.add_argument("--num_epochs", default=num_epochs,
