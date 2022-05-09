@@ -27,7 +27,9 @@ def train(hw_model, optimizer, criterion, train_loader, device):
         optimizer.zero_grad()
         logits = hw_model(images)
         log_probs = F.log_softmax(logits, dim=2)
+
         length_outputs = torch.LongTensor([logits.size(0)] * batch_size)
+        length_labels = torch.flatten(length_labels)
 
         loss = criterion(log_probs, labels, length_outputs, length_labels)
         train_running_loss += loss.item()
@@ -35,7 +37,7 @@ def train(hw_model, optimizer, criterion, train_loader, device):
         torch.nn.utils.clip_grad_norm_(hw_model.parameters(), 5) # gradient clipping with 5
         optimizer.step()
 
-    train_loss = train_running_loss
+    train_loss = train_running_loss / num_train_batches
     return train_loss
 
 def validate(hw_model, criterion, valid_loader, device):
@@ -58,7 +60,7 @@ def validate(hw_model, criterion, valid_loader, device):
             loss = criterion(log_probs, labels, length_outputs, length_labels)
             valid_running_loss += loss.item()
 
-        valid_loss = valid_running_loss
+        valid_loss = valid_running_loss / num_valid_batches
     return valid_loss
 
 def train_hw_recognizer(FLAGS):
@@ -105,7 +107,7 @@ def train_hw_recognizer(FLAGS):
     hw_model.to(device)
 
     optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate, weight_decay=FLAGS.weight_decay)
-    criterion = nn.CTCLoss(reduction="sum", zero_infinity=True)
+    criterion = nn.CTCLoss(reduction="mean", zero_infinity=True)
 
     print(f"training of handwriting recognition model {FLAGS.which_hw_model} started")
     for epoch in range(1, FLAGS.num_epochs+1):
@@ -114,7 +116,7 @@ def train_hw_recognizer(FLAGS):
         valid_loss = validate(hw_model, criterion, valid_loader, device)
         time_end = time.time()
         print(f"epoch: {epoch}/{FLAGS.num_epochs}, time: {time_end-time_start:.3f} sec.")
-        print(f"train loss: {train_loss:.4f}, validation loss: {valid_loss:.4f}")
+        print(f"train loss: {train_loss:.6f}, validation loss: {valid_loss:.6f}\n")
 
         csv_writer.write_row(
             [

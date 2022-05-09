@@ -26,7 +26,7 @@ def read_IAM_label_txt_file(file_txt_labels):
 
     return all_image_files, all_labels
 
-class HWRecogIAMDataset:
+class HWRecogIAMDataset(Dataset):
     CHAR_SET = ' !"#&\'()*+,-./0123456789:;?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     CHAR_2_LABEL = {char: i + 1 for i, char in enumerate(CHAR_SET)}
     LABEL_2_CHAR = {label: char for char, label in CHAR_2_LABEL.items()}
@@ -54,7 +54,6 @@ class HWRecogIAMDataset:
     def __getitem__(self, idx):
         image_gray = imread(os.path.join(self.dir_images, self.image_files[idx]))
         image_3_channel = np.repeat(np.expand_dims(image_gray, -1), 3, -1)
-
         image_3_channel = self.transform(image_3_channel)
 
         label_string = self.labels[idx]
