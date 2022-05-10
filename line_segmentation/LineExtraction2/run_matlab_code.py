@@ -15,9 +15,9 @@ def split_masks(original_mask):
     return return_masks
 
 
-def extract_masks():
+def extract_masks(file):
     eng = matlab.engine.start_matlab()
-    result, Labels, linesMask, colouredMask = eng.run_barakat_from_python(nargout=4)
+    result, Labels, linesMask, colouredMask = eng.run_barakat_from_python(file, nargout=4)
 
     x = np.array(colouredMask._data).reshape(colouredMask.size[::-1]).T
 
@@ -28,7 +28,7 @@ def extract_masks():
 
 
 if __name__ == "__main__":
-    separated_masks = extract_masks()
+    separated_masks = extract_masks("ms_25.png")
     i = 1
 
     for mask in separated_masks:
