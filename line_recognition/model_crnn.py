@@ -4,7 +4,7 @@ import torch.nn as nn
 from model_visual_features import ResNetFeatureExtractor
 
 class CRNN(nn.Module):
-    def __init__(self, num_classes, image_height, num_feats_mapped_seq_hidden=64, num_feats_seq_hidden=256):
+    def __init__(self, num_classes, image_height, num_feats_mapped_seq_hidden=128, num_feats_seq_hidden=256):
         super().__init__()
         self.visual_feature_extractor = ResNetFeatureExtractor()
         self.output_height = image_height // 32
@@ -23,10 +23,14 @@ class CRNN(nn.Module):
         batch_size, num_channels, height, width = visual_feats.size()
         # BCHW
 
-        visual_feats = visual_feats.view(batch_size, num_channels * height, width)
+
+        visual_feats = visual_feats.permute(3, 0, 1, 2)
+        visual_feats = visual_feats.contiguous().view(visual_feats.shape[0], visual_feats.shape[1], -1)
+
+        #visual_feats = visual_feats.view(batch_size, num_channels * height, width)
         # [B, C*H, W]
 
-        visual_feats = visual_feats.permute(2, 0, 1)
+        #visual_feats = visual_feats.permute(2, 0, 1)
         # [W, B, C*H]
 
         seq = self.map_visual_to_seq(visual_feats)
