@@ -102,14 +102,14 @@ def train_hw_recognizer(FLAGS):
     print(f"model: {FLAGS.which_hw_model}")
     print(f"learning rate: {FLAGS.learning_rate:.6f}, weight decay: {FLAGS.weight_decay:.6f}")
     print(f"batch size : {FLAGS.batch_size}, image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
-    print(f"num train samples: {num_train_samples}, num validation samples: {num_valid_samples}")
+    print(f"num train samples: {num_train_samples}, num validation samples: {num_valid_samples}\n")
     hw_model = CRNN(num_classes, FLAGS.image_height)
     hw_model.to(device)
 
     optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate, weight_decay=FLAGS.weight_decay)
     criterion = nn.CTCLoss(reduction="mean", zero_infinity=True)
 
-    print(f"training of handwriting recognition model {FLAGS.which_hw_model} started")
+    print(f"training of handwriting recognition model {FLAGS.which_hw_model} started\n")
     for epoch in range(1, FLAGS.num_epochs+1):
         time_start = time.time()
         train_loss = train(hw_model, optimizer, criterion, train_loader, device)
@@ -135,8 +135,8 @@ def main():
     weight_decay = 1e-6
     batch_size = 64
     num_epochs = 50
-    image_height = 64
-    image_width = 256
+    image_height = 32
+    image_width = 768
     which_hw_model = "crnn"
     dir_dataset = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/"
 
