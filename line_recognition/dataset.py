@@ -31,7 +31,7 @@ class HWRecogIAMDataset(Dataset):
     CHAR_2_LABEL = {char: i + 1 for i, char in enumerate(CHAR_SET)}
     LABEL_2_CHAR = {label: char for char, label in CHAR_2_LABEL.items()}
 
-    def __init__(self, image_files, labels, dir_images, image_height=64, image_width=768):
+    def __init__(self, image_files, labels, dir_images, image_height=32, image_width=768):
         self.labels = labels
         self.dir_images = dir_images
         self.image_files = image_files
@@ -52,7 +52,8 @@ class HWRecogIAMDataset(Dataset):
         return len(self.image_files)
 
     def __getitem__(self, idx):
-        image_gray = imread(os.path.join(self.dir_images, self.image_files[idx]))
+        image_file_name = self.image_files[idx]
+        image_gray = imread(os.path.join(self.dir_images, image_file_name))
         image_3_channel = np.repeat(np.expand_dims(image_gray, -1), 3, -1)
         image_3_channel = self.transform(image_3_channel)
 
@@ -81,7 +82,7 @@ def split_dataset(file_txt_labels, for_train=True):
     else:
         return test_image_files, test_labels
 
-def get_dataloaders_for_training(train_x, train_y, valid_x, valid_y, dir_images, image_height=64, image_width=768, batch_size=8):
+def get_dataloaders_for_training(train_x, train_y, valid_x, valid_y, dir_images, image_height=32, image_width=768, batch_size=8):
     train_dataset = HWRecogIAMDataset(train_x, train_y, dir_images, image_height=image_height, image_width=image_width)
     valid_dataset = HWRecogIAMDataset(valid_x, valid_y, dir_images, image_height=image_height, image_width=image_width)
 
@@ -101,7 +102,7 @@ def get_dataloaders_for_training(train_x, train_y, valid_x, valid_y, dir_images,
     )
     return train_loader, valid_loader
 
-def get_dataloader_for_testing(test_x, test_y, dir_images, image_height=64, image_width=768, batch_size=1):
+def get_dataloader_for_testing(test_x, test_y, dir_images, image_height=32, image_width=768, batch_size=1):
     test_dataset = HWRecogIAMDataset(test_x, test_y, dir_images=dir_images, image_height=image_height, image_width=image_width)
     test_loader = DataLoader(
         test_dataset,
