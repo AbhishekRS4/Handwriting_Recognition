@@ -4,7 +4,7 @@ from torch import Tensor
 from torchvision.models.resnet import BasicBlock, model_urls, load_state_dict_from_url, conv1x1, conv3x3
 
 
-class ResNet(nn.Module):
+class CustomResNet(nn.Module):
     def __init__(
         self,
         layers: List[int],
@@ -122,16 +122,15 @@ class ResNet(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         return self._forward_impl(x)
 
-def _resnet(layers: List[int], pretrained=True) -> ResNet:
-
-    model = ResNet(layers)
+def _resnet(layers: List[int], pretrained=True) -> CustomResNet:
+    model = CustomResNet(layers)
 
     if pretrained:
         model.load_state_dict(load_state_dict_from_url(model_urls["resnet34"]))
 
     return model
 
-def resnet34(*, pretrained=True) -> ResNet:
+def resnet34(*, pretrained=True) -> CustomResNet:
     """ResNet-34 from `Deep Residual Learning for Image Recognition <https://arxiv.org/pdf/1512.03385.pdf>`__.
     Args:
         weights (:class:`~torchvision.models.ResNet34_Weights`, optional): The
@@ -162,7 +161,7 @@ class ResNetFeatureExtractor(nn.Module):
         Arguments
         ---------
         pretrained : bool (default=True)
-            boolean to control whether to use a pretrained resnet model or not
+            boolean to indicate whether to use a pretrained resnet model or not
         """
         super().__init__()
         self.output_channels = 512
@@ -178,6 +177,8 @@ class ResNetFeatureExtractor(nn.Module):
         block3 = self.resnet34.layer2(block2)  # [128, H/8, W/8]
         block4 = self.resnet34.layer3(block3)  # [256, H/16, W/16]
         resnet_features = self.resnet34.layer4(block4)  # [512, H/32, W/32]
+
+
 
         # [B, 512, H/32, W/32]
         return resnet_features
