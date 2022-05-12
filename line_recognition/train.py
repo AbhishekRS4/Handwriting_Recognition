@@ -9,7 +9,7 @@ import torch.nn.functional as F
 
 from model_crnn import CRNN
 from logger_utils import CSVWriter, write_json_file
-from utils import compute_wer_and_cer_for_batch, ctc_decode
+from utils import compute_wer_and_cer_for_sample, ctc_decode
 from dataset import HWRecogIAMDataset, split_dataset, get_dataloaders_for_training
 
 
