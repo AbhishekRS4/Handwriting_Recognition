@@ -91,6 +91,6 @@ def compute_wer_and_cer_for_batch(batch_preds, batch_gts):
     return cer_batch, wer_batch
 
 def compute_wer_and_cer_for_sample(str_pred, str_gt):
-    cer = fastwer.score_sent(str_pred, str_gt, char_level=True)
-    wer = fastwer.score_sent(str_pred, str_gt)
+    cer_sample = fastwer.score_sent(str_pred, str_gt, char_level=True)
+    wer_sample = fastwer.score_sent(str_pred, str_gt)
     return cer_sample, wer_sample
