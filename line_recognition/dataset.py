@@ -41,6 +41,9 @@ class HWRecogIAMDataset(Dataset):
         self.transform = transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize((self.image_height, self.image_width), Image.BILINEAR),
+            transforms.RandomAffine(degrees=[-0.75, 0.75], translate=[0, 0.05], scale=[0.75, 1],
+                shear=[-10, 15], interpolation=transforms.InterpolationMode.BILINEAR, fill=255,
+            ),
             transforms.ToTensor(),
             transforms.Normalize(
                 mean=[0.485, 0.456, 0.406],
