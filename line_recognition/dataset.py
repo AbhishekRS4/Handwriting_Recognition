@@ -31,25 +31,38 @@ class HWRecogIAMDataset(Dataset):
     CHAR_2_LABEL = {char: i + 1 for i, char in enumerate(CHAR_SET)}
     LABEL_2_CHAR = {label: char for char, label in CHAR_2_LABEL.items()}
 
-    def __init__(self, image_files, labels, dir_images, image_height=32, image_width=768):
+    def __init__(self, image_files, labels, dir_images, image_height=32, image_width=768, which_set="train"):
         self.labels = labels
         self.dir_images = dir_images
         self.image_files = image_files
         self.image_width = image_width
         self.image_height = image_height
+        self.which_set = which_set
 
-        self.transform = transforms.Compose([
-            transforms.ToPILImage(),
-            transforms.Resize((self.image_height, self.image_width), Image.BILINEAR),
-            transforms.RandomAffine(degrees=[-0.75, 0.75], translate=[0, 0.05], scale=[0.75, 1],
-                shear=[-10, 15], interpolation=transforms.InterpolationMode.BILINEAR, fill=255,
-            ),
-            transforms.ToTensor(),
-            transforms.Normalize(
-                mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225],
-            ),
-        ])
+        if self.which_set == "train"
+            # apply data augmentation only for train set
+            self.transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.Resize((self.image_height, self.image_width), Image.BILINEAR),
+                transforms.RandomAffine(degrees=[-0.75, 0.75], translate=[0, 0.05], scale=[0.75, 1],
+                    shear=[-10, 15], interpolation=transforms.InterpolationMode.BILINEAR, fill=255,
+                ),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406],
+                    std=[0.229, 0.224, 0.225],
+                ),
+            ])
+        else:
+            self.transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.Resize((self.image_height, self.image_width), Image.BILINEAR),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406],
+                    std=[0.229, 0.224, 0.225],
+                ),
+            ])
 
     def __len__(self):
         return len(self.image_files)
@@ -86,8 +99,8 @@ def split_dataset(file_txt_labels, for_train=True):
         return test_image_files, test_labels
 
 def get_dataloaders_for_training(train_x, train_y, valid_x, valid_y, dir_images, image_height=32, image_width=768, batch_size=8):
-    train_dataset = HWRecogIAMDataset(train_x, train_y, dir_images, image_height=image_height, image_width=image_width)
-    valid_dataset = HWRecogIAMDataset(valid_x, valid_y, dir_images, image_height=image_height, image_width=image_width)
+    train_dataset = HWRecogIAMDataset(train_x, train_y, dir_images, image_height=image_height, image_width=image_width, which_set="train")
+    valid_dataset = HWRecogIAMDataset(valid_x, valid_y, dir_images, image_height=image_height, image_width=image_width, which_set="valid")
 
     train_loader = DataLoader(
         train_dataset,
@@ -106,7 +119,7 @@ def get_dataloaders_for_training(train_x, train_y, valid_x, valid_y, dir_images,
     return train_loader, valid_loader
 
 def get_dataloader_for_testing(test_x, test_y, dir_images, image_height=32, image_width=768, batch_size=1):
-    test_dataset = HWRecogIAMDataset(test_x, test_y, dir_images=dir_images, image_height=image_height, image_width=image_width)
+    test_dataset = HWRecogIAMDataset(test_x, test_y, dir_images=dir_images, image_height=image_height, image_width=image_width, which_set="test")
     test_loader = DataLoader(
         test_dataset,
         batch_size=batch_size,
