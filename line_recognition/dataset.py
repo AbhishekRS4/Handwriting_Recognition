@@ -39,7 +39,7 @@ class HWRecogIAMDataset(Dataset):
         self.image_height = image_height
         self.which_set = which_set
 
-        if self.which_set == "train"
+        if self.which_set == "train":
             # apply data augmentation only for train set
             self.transform = transforms.Compose([
                 transforms.ToPILImage(),
