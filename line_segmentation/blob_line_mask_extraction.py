@@ -10,10 +10,7 @@ import skimage
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # TODO:
-#   -   allow for reading of files DONE
-#   -   order masks from top to bottom DONE
-#   -   extract lines from images DONE
-#   -   character segmentation TO BE DONE
+#   -   character segmentation
 
 
 def get_subdirectory(sd):
