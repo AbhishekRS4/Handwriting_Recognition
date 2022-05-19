@@ -3,3 +3,4 @@ __pycache__
 .idea
 /data
 /line_segmentation/masks
+/line_segmentation/crops

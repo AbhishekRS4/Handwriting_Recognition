@@ -2,15 +2,18 @@ import LineExtraction2.run_matlab_code as rmc
 import dataset_task1 as ds
 import numpy as np
 import os
+import cv2
 from PIL import Image
+import skimage
+
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # TODO:
 #   -   allow for reading of files DONE
 #   -   order masks from top to bottom DONE
-#   -   extract lines from images
-#   -
+#   -   extract lines from images DONE
+#   -   character segmentation TO BE DONE
 
 
 def get_subdirectory(sd):
@@ -30,32 +33,101 @@ def save_masks(masks, index):
         # img.show()
         img.save(f"{get_subdirectory('masks')}/image_" + str(index) + "_python_mask_" + str(i) + ".jpg")
         i += 1
+
     # array of binary masks
-    # np.save("results/image_" + str(index) + "full.jpg", masks)
+    np.save("masks/image_" + str(index) + "full", masks)
+
+
+# white-out surrounding image from mask
+def apply_mask(image, mask):
+    for i in range(len(mask)):
+        for j in range(len(mask[i][:])):
+            if mask[i][j] == 0.:
+                image[i][j] = (255,255,255)
+
+    return image
+
+
+# crop mask and image to outline of mask to reduce image size
+def get_segment_crop(img,tol=0, mask=None):
+    if mask is None:
+        mask = img > tol
+
+    coords = np.ix_(mask.any(1), mask.any(0))
+    return img[coords], mask[coords]
+
+
+# crop images to masks
+def extract_lines(file, masks, idx):
+    image = cv2.imread(file)
+
+    # Remove background using bitwise-and operation
+    i = 1
+    for mask in masks:
+
+        crop_im, crop_mask = get_segment_crop(image, mask=mask)
+        result = apply_mask(crop_im, crop_mask)
+
+        # cv2.imshow("result", result)
+        # cv2.waitKey(0)
+
+        print("writing as: ", f"{get_subdirectory('crops')}/image_" + str(idx) + "_crop_" + str(i) + ".jpg")
+        cv2.imwrite(f"{get_subdirectory('crops')}/image_" + str(idx) + "_crop_" + str(i) + ".jpg", result)
+
+        i += 1
 
 
 # get masks from the input data and save them
-def get_masks():
+def get_cropped_images():
     file_names = ds.read_binarized_images()
-
     i = 1
 
     for file in file_names:
         print(file)
         separated_masks = rmc.extract_masks(file)
-        save_masks(separated_masks, i)
+        extract_lines(file, separated_masks, i)
+        # save_masks(separated_masks, i)
         i += 1
 
 
 if __name__ == "__main__":
-    get_masks()
-    # separated_masks = rmc.extract_masks(
-    #     'C:\GitHub_Jeroen\Handwriting_Recognition\data\\task1\image-data\P106-Fg002-R-C01-R01-binarized.jpg')
-    # i = 1
+    # -- to run regular program
+    get_cropped_images()
+
+    # -- to run for single image
+    # file = os.path.join(ROOT_DIR, 'data\\task1\\image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
+    # separated_masks = rmc.extract_masks(file)
+    # extract_lines(file, separated_masks, 0)
+
+    # -- to get outlines on single image
+    # file = os.path.join(ROOT_DIR, 'data\\task1\\image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
+    # mask = rmc.extract_complete_mask(file)
+    # np.save("masks/contour_test_mask", mask)
+    #
+    # mask = np.load("masks/contour_test_mask.npy")
+    # image = cv2.imread(file)
+    #
+    # out1 = skimage.color.label2rgb(mask, image, kind='overlay')
+    #
+    # imS = cv2.resize(out1, (960, 540))  # Resize image
+    # cv2.imshow("output", imS)
+    #
+    # cv2.waitKey(0)
+
+    # -- to test cropping
+    # file = os.path.join(ROOT_DIR, 'data\\task1\\image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
+    # # separated_masks = rmc.extract_masks(file)
+    #
+    # # np.save("masks/cropping_test_masks", separated_masks)
+    # separated_masks = np.load("masks/cropping_test_masks.npy")
+    #
+    # image = cv2.imread(file)
     #
     # for mask in separated_masks:
-    #     mask *= (255 / mask.max())
-    #     img = Image.fromarray(mask.astype(np.uint8))
-    #     # img.show()
-    #     img.save("python_mask_" + str(i) + ".jpg")
-    #     i += 1
+    #     crop_im, crop_mask = get_segment_crop(image, mask=mask)
+    #
+    #     result = apply_mask(crop_im, crop_mask)
+    #
+    #     cv2.imshow("result", result)
+    #
+    #     cv2.waitKey(0)

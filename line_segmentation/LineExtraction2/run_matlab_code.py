@@ -38,7 +38,19 @@ def sort_masks(separated_masks):
     return [separated_masks for _, separated_masks in sorted(zip(heights, separated_masks))]
 
 
-# extract masks from binarized image
+# returns full mask for binarized image
+def extract_complete_mask(file):
+    path = os.path.join(ROOT_DIR, "LineExtraction2")
+    eng = matlab.engine.start_matlab()
+    eng.cd(path, nargout=0)
+    result, Labels, linesMask, colouredMask = eng.run_barakat_from_python(file, nargout=4)
+
+    x = np.array(colouredMask._data).reshape(colouredMask.size[::-1]).T
+
+    return x
+
+
+# extracts masks from binarized image and returns all masks separately
 def extract_masks(file):
     path = os.path.join(ROOT_DIR, "LineExtraction2")
     eng = matlab.engine.start_matlab()
