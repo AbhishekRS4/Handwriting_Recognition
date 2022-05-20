@@ -7,7 +7,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 
-from model_main import CRNN, STN_CRNN
+from model_main import CRNN, STN_CRNN, STN_PP_CRNN
 from logger_utils import CSVWriter, write_json_file
 from utils import compute_wer_and_cer_for_sample, ctc_decode
 from dataset import HWRecogIAMDataset, split_dataset, get_dataloaders_for_training
@@ -138,6 +138,8 @@ def train_hw_recognizer(FLAGS):
         hw_model = CRNN(num_classes, FLAGS.image_height)
     elif FLAGS.which_hw_model == "stn_crnn":
         hw_model = STN_CRNN(num_classes, FLAGS.image_height, FLAGS.image_width)
+    elif FLAGS.which_hw_model == "stn_pp_crnn":
+        hw_model = STN_PP_CRNN(num_classes, FLAGS.image_height, FLAGS.image_width)
     else:
         print(f"unidentified option : {FLAGS.which_hw_model}")
         sys.exit(0)
@@ -198,7 +200,7 @@ def main():
     parser.add_argument("--dir_dataset", default=dir_dataset,
         type=str, help="full directory path to the dataset")
     parser.add_argument("--which_hw_model", default=which_hw_model,
-        type=str, choices=["crnn", "stn_crnn"], help="which model to train")
+        type=str, choices=["crnn", "stn_crnn", "stn_pp_crnn"], help="which model to train")
 
     FLAGS, unparsed = parser.parse_known_args()
     train_hw_recognizer(FLAGS)
