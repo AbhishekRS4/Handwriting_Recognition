@@ -346,3 +346,53 @@ class GridGenerator(nn.Module):
         batch_T = torch.bmm(batch_inv_delta_C, batch_C_prime_with_zeros)  # batch_size x F+3 x 2
         batch_P_prime = torch.bmm(batch_P_hat, batch_T)  # batch_size x n x 2
         return batch_P_prime  # batch_size x n x 2
+
+
+########################################
+######## Pyramid Pooling Block #########
+########################################
+class PyramidPool(nn.Module):
+    def __init__(self, pool_kernel_size, num_channels):
+        super().__init__()
+        self.pool_kernel_size = pool_kernel_size
+        self.avg_pool_block = nn.Sequential(
+            nn.AvgPool2d((1, self.pool_kernel_size), stride=(1, self.pool_kernel_size)),
+            nn.Conv2d(num_channels, num_channels, kernel_size=1, stride=1, padding="same", bias=False),
+            nn.BatchNorm2d(num_channels),
+            nn.ELU(inplace=True),
+        )
+
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.xavier_normal_(m.weight)
+            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+
+    def forward(self, x):
+        _, _, in_height, in_width = x.size()
+        x = self.avg_pool_block(x)
+        x = F.interpolate(x, size=(in_height, in_width), mode="bilinear")
+        return x
+
+
+class PyramidPoolBlock(nn.Module):
+    def __init__(self, pyramid_pool_kernel_sizes=[8, 16, 32, 64], num_channels=512):
+        super().__init__()
+        self.pyramid_pool_layers = nn.ModuleList([PyramidPool(pool_kernel_size=k, num_channels=num_channels) for k in pyramid_pool_kernel_sizes])
+        self.final_layer = nn.Sequential(
+            nn.Conv2d(num_channels*(1 + len(self.pyramid_pool_layers)), num_channels, 1, stride=1, padding="same"),
+            nn.BatchNorm2d(num_channels),
+            nn.ELU(inplace=True),
+            nn.Dropout(p=0.1),
+        )
+
+    def forward(self, input):
+        pp_outputs = []
+        for pp_layer in self.pyramid_pool_layers:
+            pp_output = pp_layer(input)
+            pp_outputs.append(pp_output)
+        pp_outputs.append(input)
+        x = torch.cat(pp_outputs, dim=1)
+        x = self.final_layer(x)
+        return x
