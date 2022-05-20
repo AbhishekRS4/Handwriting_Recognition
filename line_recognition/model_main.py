@@ -2,7 +2,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 
-from model_visual_features import ResNetFeatureExtractor, TPS_SpatialTransformerNetwork
+from model_visual_features import ResNetFeatureExtractor, TPS_SpatialTransformerNetwork, PyramidPoolBlock
 
 class HW_RNN_Seq2Seq(nn.Module):
     def __init__(self, num_classes, image_height, cnn_output_channels=512, num_feats_mapped_seq_hidden=128, num_feats_seq_hidden=256):
@@ -66,4 +66,25 @@ class STN_CRNN(nn.Module):
         stn_output = self.stn(x)
         visual_feats = self.visual_feature_extractor(stn_output)
         log_probs = self.rnn_seq2seq_module(visual_feats)
+        return log_probs
+
+
+class STN_PP_CRNN(nn.Module):
+    def __init__(self, num_classes, image_height, image_width, num_feats_mapped_seq_hidden=128, num_feats_seq_hidden=256):
+        super().__init__()
+        self.stn = TPS_SpatialTransformerNetwork(
+            20,
+            (image_height, image_width),
+            (image_height, image_width),
+            I_channel_num=3,
+        )
+        self.pp_block = PyramidPoolBlock()
+        self.visual_feature_extractor = ResNetFeatureExtractor()
+        self.rnn_seq2seq_module = HW_RNN_Seq2Seq(num_classes, image_height, self.visual_feature_extractor.output_channels, num_feats_mapped_seq_hidden, num_feats_seq_hidden)
+
+    def forward(self, x):
+        stn_output = self.stn(x)
+        visual_feats = self.visual_feature_extractor(stn_output)
+        pp_feats = self.pp_block(visual_feats)
+        log_probs = self.rnn_seq2seq_module(pp_feats)
         return log_probs
