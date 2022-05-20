@@ -7,7 +7,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 
-from model_crnn import CRNN
+from model_main import CRNN, STN_CRNN
 from logger_utils import CSVWriter, write_json_file
 from utils import compute_wer_and_cer_for_sample, ctc_decode
 from dataset import HWRecogIAMDataset, split_dataset, get_dataloaders_for_training
@@ -74,15 +74,6 @@ def validate(hw_model, criterion, valid_loader, device):
 
                 final_labels_for_eval.append(label)
 
-            """
-            print(len(final_labels_for_eval))
-            print(final_labels_for_eval)
-            print("")
-            print(len(pred_labels))
-            print(pred_labels)
-            print("")
-            """
-
             for i in range(len(final_labels_for_eval)):
                 if len(pred_labels[i]) != 0:
                     str_label = [HWRecogIAMDataset.LABEL_2_CHAR[i] for i in final_labels_for_eval[i]]
@@ -142,7 +133,14 @@ def train_hw_recognizer(FLAGS):
     print(f"learning rate: {FLAGS.learning_rate:.6f}, weight decay: {FLAGS.weight_decay:.6f}")
     print(f"batch size : {FLAGS.batch_size}, image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
     print(f"num train samples: {num_train_samples}, num validation samples: {num_valid_samples}\n")
-    hw_model = CRNN(num_classes, FLAGS.image_height)
+
+    if FLAGS.which_hw_model == "crnn":
+        hw_model = CRNN(num_classes, FLAGS.image_height)
+    elif FLAGS.which_hw_model == "stn_crnn":
+        hw_model = STN_CRNN(num_classes, FLAGS.image_height, FLAGS.image_width)
+    else:
+        print(f"unidentified option : {FLAGS.which_hw_model}")
+        sys.exit(0)
     hw_model.to(device)
 
     optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate, weight_decay=FLAGS.weight_decay)
@@ -200,7 +198,7 @@ def main():
     parser.add_argument("--dir_dataset", default=dir_dataset,
         type=str, help="full directory path to the dataset")
     parser.add_argument("--which_hw_model", default=which_hw_model,
-        type=str, choices=["crnn"], help="which model to train")
+        type=str, choices=["crnn", "stn_crnn"], help="which model to train")
 
     FLAGS, unparsed = parser.parse_known_args()
     train_hw_recognizer(FLAGS)
