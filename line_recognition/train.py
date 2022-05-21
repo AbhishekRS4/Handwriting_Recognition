@@ -172,10 +172,10 @@ def train_hw_recognizer(FLAGS):
     return
 
 def main():
-    learning_rate = 3e-5
-    weight_decay = 1e-6
+    learning_rate = 3e-4
+    weight_decay = 1e-4
     batch_size = 64
-    num_epochs = 50
+    num_epochs = 100
     image_height = 32
     image_width = 768
     which_hw_model = "crnn"
