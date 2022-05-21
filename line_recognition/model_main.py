@@ -78,8 +78,8 @@ class STN_PP_CRNN(nn.Module):
             (image_height, image_width),
             I_channel_num=3,
         )
-        self.pp_block = PyramidPoolBlock()
         self.visual_feature_extractor = ResNetFeatureExtractor()
+        self.pp_block = PyramidPoolBlock(num_channels=self.visual_feature_extractor.output_channels)
         self.rnn_seq2seq_module = HW_RNN_Seq2Seq(num_classes, image_height, self.visual_feature_extractor.output_channels, num_feats_mapped_seq_hidden, num_feats_seq_hidden)
 
     def forward(self, x):

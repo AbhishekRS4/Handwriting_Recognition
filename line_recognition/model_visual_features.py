@@ -352,13 +352,13 @@ class GridGenerator(nn.Module):
 ######## Pyramid Pooling Block #########
 ########################################
 class PyramidPool(nn.Module):
-    def __init__(self, pool_kernel_size, num_channels):
+    def __init__(self, pool_kernel_size, in_channels, out_channels):
         super().__init__()
         self.pool_kernel_size = pool_kernel_size
         self.avg_pool_block = nn.Sequential(
             nn.AvgPool2d((1, self.pool_kernel_size), stride=(1, self.pool_kernel_size)),
-            nn.Conv2d(num_channels, num_channels, kernel_size=1, stride=1, padding="same", bias=False),
-            nn.BatchNorm2d(num_channels),
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding="same", bias=False),
+            nn.BatchNorm2d(out_channels),
             nn.ELU(inplace=True),
         )
 
@@ -377,11 +377,12 @@ class PyramidPool(nn.Module):
 
 
 class PyramidPoolBlock(nn.Module):
-    def __init__(self, pyramid_pool_kernel_sizes=[8, 16, 32, 64], num_channels=512):
+    def __init__(self, pyramid_pool_kernel_sizes=[4, 8, 16, 32], num_channels=512):
         super().__init__()
-        self.pyramid_pool_layers = nn.ModuleList([PyramidPool(pool_kernel_size=k, num_channels=num_channels) for k in pyramid_pool_kernel_sizes])
+        pp_out_channels = 256
+        self.pyramid_pool_layers = nn.ModuleList([PyramidPool(pool_kernel_size=k, in_channels=num_channels, out_channels=pp_out_channels) for k in pyramid_pool_kernel_sizes])
         self.final_layer = nn.Sequential(
-            nn.Conv2d(num_channels*(1 + len(self.pyramid_pool_layers)), num_channels, 1, stride=1, padding="same"),
+            nn.Conv2d((num_channels + (pp_out_channels * len(self.pyramid_pool_layers))), num_channels, (1, 5), stride=1, padding="same"),
             nn.BatchNorm2d(num_channels),
             nn.ELU(inplace=True),
             nn.Dropout(p=0.1),
