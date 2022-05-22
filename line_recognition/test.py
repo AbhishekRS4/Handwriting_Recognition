@@ -8,7 +8,7 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 
-from model_main import CRNN
+from model_main import CRNN, STN_CRNN
 from utils import ctc_decode, compute_wer_and_cer_for_sample
 from dataset import HWRecogIAMDataset, split_dataset, get_dataloader_for_testing
 
