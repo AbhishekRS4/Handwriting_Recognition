@@ -19,7 +19,7 @@ def read_IAM_label_txt_file(file_txt_labels):
     for cur_line_num in range(num_lines):
         if cur_line_num % 3 == 0:
             all_image_files.append(all_lines[cur_line_num].strip())
-        elif cur_line_num %3 == 1:
+        elif cur_line_num % 3 == 1:
             all_labels.append(all_lines[cur_line_num].strip())
         else:
             continue
