@@ -100,16 +100,17 @@ if __name__ == "__main__":
     # file = os.path.join(ROOT_DIR, 'data\\task1\\image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
     # mask = rmc.extract_complete_mask(file)
     # np.save("masks/contour_test_mask", mask)
-    #
+
     # mask = np.load("masks/contour_test_mask.npy")
     # image = cv2.imread(file)
     #
     # out1 = skimage.color.label2rgb(mask, image, kind='overlay')
     #
-    # imS = cv2.resize(out1, (960, 540))  # Resize image
-    # cv2.imshow("output", imS)
+    # result = cv2.resize(out1, (960, 540))  # Resize image
+    # cv2.imshow("output", result)
     #
     # cv2.waitKey(0)
+    # cv2.imwrite(f"{get_subdirectory('masks')}/complete_mask.jpg", result*255)
 
     # -- to test cropping
     # file = os.path.join(ROOT_DIR, 'data\\task1\\image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
