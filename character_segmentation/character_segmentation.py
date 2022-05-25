@@ -30,12 +30,14 @@ def get_histogram(file):
     # Plot graph
     plt.title('histogram ')
     plt.stairs(bins, fill=True)
+    inv_data = np.multiply(bins, -1)
+    peaks, _ = sp.find_peaks(inv_data)
+    print(peaks)
+    # maxima = np.array(bins)[peaks.astype(int)]
+    max_height = max(bins)
 
-    peaks, _ = sp.find_peaks(bins)
-    maxima = np.array(bins)[peaks.astype(int)]
-
-    plt.plot(peaks, maxima, "x")
-    plt.vlines(x=peaks, ymin=0, ymax=maxima, colors="red")
+    # plt.plot(peaks, max_height, "x")
+    plt.vlines(x=peaks, ymin=0, ymax=max_height, colors="red")
 
     plt.show()
 
