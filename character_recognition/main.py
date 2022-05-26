@@ -77,7 +77,7 @@ if __name__ == '__main__':
         print("Pretraining")
         pre_history = train.training("alexnet", (64, 64), 32)
         print("pretrain done")
-    history = Fit_model.fitting_model(model, 'cnnmodel-' + optimizer, (64, 64))
+    history = train.training(model, "alexnet", (64, 64), 32)
     
     # (4) Print results
     if pretrain: 
