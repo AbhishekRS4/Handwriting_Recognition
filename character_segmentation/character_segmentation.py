@@ -7,14 +7,20 @@ import scipy.signal as sp
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def trim(image):
-    pass
+def trim_sides(image):
+    _, zero_col_ind = np.where(image == 0)
+
+    first = min(zero_col_ind)
+    last = max(zero_col_ind)
+
+    return image[:, first:last]
 
 
 def get_histogram(file):
     image = cv2.imread(file)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     _, image = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    image = trim_sides(image)
     im_transp = image.T
     bins = []
 
@@ -35,10 +41,6 @@ def get_histogram(file):
     ax[1].set_xlim([0, len(bins)])
     inv_data = np.multiply(bins, -1)
     peaks, _ = sp.find_peaks(inv_data)
-    # maxima = np.array(bins)[peaks.astype(int)]
-    # max_height = max(bins)
-    # plt.plot(peaks, max_height, "x")
-    # plt.vlines(x=peaks, ymin=0, ymax=max_height, colors="red")
 
     # Plot binary graph
     binarized = (bins > np.mean(bins)).astype(np.int_)
