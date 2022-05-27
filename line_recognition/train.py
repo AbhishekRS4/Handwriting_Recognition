@@ -131,7 +131,7 @@ def train_hw_recognizer(FLAGS):
     print(f"task - handwriting recognition")
     print(f"model: {FLAGS.which_hw_model}")
     print(f"learning rate: {FLAGS.learning_rate:.6f}, weight decay: {FLAGS.weight_decay:.6f}")
-    print(f"batch size : {FLAGS.batch_size}, image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
+    print(f"batch size: {FLAGS.batch_size}, image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
     print(f"num train samples: {num_train_samples}, num validation samples: {num_valid_samples}\n")
 
     if FLAGS.which_hw_model == "crnn":
@@ -141,11 +141,17 @@ def train_hw_recognizer(FLAGS):
     elif FLAGS.which_hw_model == "stn_pp_crnn":
         hw_model = STN_PP_CRNN(num_classes, FLAGS.image_height, FLAGS.image_width)
     else:
-        print(f"unidentified option : {FLAGS.which_hw_model}")
+        print(f"unidentified option: {FLAGS.which_hw_model}")
         sys.exit(0)
     hw_model.to(device)
 
-    optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate, weight_decay=FLAGS.weight_decay)
+    if FLAGS.which_optimizer == "adam":
+        optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate, weight_decay=FLAGS.weight_decay)
+    elif FLAGS.which_optimizer == "adadelta":
+        optimizer = torch.optim.Adadelta(hw_model.parameters(), lr=FLAGS.learning_rate, rho=0.95, eps=1e-8, weight_decay=FLAGS.weight_decay)
+    else:
+        print(f"unidentified option: {FLAGS.which_optimizer}")
+        sys.exit(0)
     criterion = nn.CTCLoss(reduction="mean", zero_infinity=True)
 
     print(f"training of handwriting recognition model {FLAGS.which_hw_model} started\n")
@@ -172,13 +178,15 @@ def train_hw_recognizer(FLAGS):
     return
 
 def main():
-    learning_rate = 3e-4
+    learning_rate = 5e-4
+    # 5e-4 for Adam, 1 for Adadelta
     weight_decay = 1e-4
     batch_size = 64
     num_epochs = 100
     image_height = 32
     image_width = 768
     which_hw_model = "crnn"
+    which_optimizer = "adadelta"
     dir_dataset = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/"
 
     parser = argparse.ArgumentParser(
@@ -199,6 +207,8 @@ def main():
         type=int, help="image width to be used to train the model")
     parser.add_argument("--dir_dataset", default=dir_dataset,
         type=str, help="full directory path to the dataset")
+    parser.add_argument("--which_optimizer", default=which_optimizer,
+        type=str, choices=["adadelta", "adam"], help="which optimizer to use to train")
     parser.add_argument("--which_hw_model", default=which_hw_model,
         type=str, choices=["crnn", "stn_crnn", "stn_pp_crnn"], help="which model to train")
 
