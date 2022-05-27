@@ -130,7 +130,7 @@ def train_hw_recognizer(FLAGS):
     num_classes = len(HWRecogIAMDataset.LABEL_2_CHAR) + 1
     print(f"task - handwriting recognition")
     print(f"model: {FLAGS.which_hw_model}")
-    print(f"learning rate: {FLAGS.learning_rate:.6f}, weight decay: {FLAGS.weight_decay:.6f}")
+    print(f"optimizer: {FLAGS.which_optimizer}, learning rate: {FLAGS.learning_rate:.6f}, weight decay: {FLAGS.weight_decay:.6f}")
     print(f"batch size: {FLAGS.batch_size}, image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
     print(f"num train samples: {num_train_samples}, num validation samples: {num_valid_samples}\n")
 
