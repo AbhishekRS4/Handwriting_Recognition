@@ -7,6 +7,7 @@ import scipy.signal as sp
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# this function trims white from the left and the right of the input image
 def trim_sides(image):
     _, zero_col_ind = np.where(image == 0)
 
@@ -16,6 +17,24 @@ def trim_sides(image):
     return image[:, first:last]
 
 
+# this function takes the locations of the binarized valleys and splits the image on these points
+def split_characters(image, splits):
+    characters = []
+
+    min = 0
+    print(len(image.T))
+    for split in splits:
+        characters.append(image[:, min:split])
+        min = split
+
+        if split == splits[-1]:
+            characters.append(image[:, min:len(image.T)])
+
+    return characters
+
+
+
+# this function creates a histogram from the input image and determines the splits based on the binarized histogram
 def get_histogram(file):
     image = cv2.imread(file)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -53,7 +72,15 @@ def get_histogram(file):
 
     plt.show()
 
+    characters = split_characters(image, binary_valleys)
+
+    for character in characters:
+        cv2.imshow("char", character)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
-    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
+    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
     get_histogram(file)
