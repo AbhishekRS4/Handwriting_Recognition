@@ -14,6 +14,27 @@ from dataset import HWRecogIAMDataset, split_dataset, get_dataloaders_for_traini
 
 
 def train(hw_model, optimizer, criterion, train_loader, device):
+    """
+    ---------
+    Arguments
+    ---------
+    hw_model : object
+        handwriting recognition model object
+    optimizer : object
+        optimizer object to be used for optimization
+    criterion : object
+        criterion or loss object to be used as the objective function for optimization
+    train_loader : object
+        train set dataloader object
+    device : str
+        device to be used for running the evaluation
+
+    -------
+    Returns
+    -------
+    train_loss : float
+        mean training loss for an epoch
+    """
     hw_model.train()
     train_running_loss = 0.0
     num_train_samples = len(train_loader.dataset)
@@ -41,6 +62,30 @@ def train(hw_model, optimizer, criterion, train_loader, device):
     return train_loss
 
 def validate(hw_model, criterion, valid_loader, device):
+    """
+    ---------
+    Arguments
+    ---------
+    hw_model : object
+        handwriting recognition model object
+    criterion : object
+        criterion or loss object to be used as the objective function for optimization
+    valid_loader : object
+        validation set dataloader object
+    device : str
+        device to be used for running the evaluation
+
+    -------
+    Returns
+    -------
+    a 3 tuple of
+    valid_loss : float
+        mean validation loss for an epoch
+    valid_cer : float
+        mean character error rate (CER) for validation set
+    valid_wer : float
+        mean word error rate (WER) for validation set
+    """
     hw_model.eval()
     valid_running_loss = 0.0
     valid_running_cer = 0.0
@@ -98,26 +143,31 @@ def train_hw_recognizer(FLAGS):
     dir_images = os.path.join(FLAGS.dir_dataset, "img")
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
+    # train only on a CUDA device (GPU)
     if torch.cuda.is_available():
         device = torch.device("cuda")
     else:
         print("CUDA device not found, so exiting....")
         sys.exit(0)
 
+    # split dataset into train and validation sets
     train_x, valid_x, train_y, valid_y = split_dataset(file_txt_labels, for_train=True)
     num_train_samples = len(train_x)
     num_valid_samples = len(valid_x)
+    # get dataloaders for train and validation sets
     train_loader, valid_loader = get_dataloaders_for_training(
         train_x, train_y, valid_x, valid_y,
         dir_images=dir_images, image_height=FLAGS.image_height, image_width=FLAGS.image_width,
         batch_size=FLAGS.batch_size,
     )
 
+    # create a directory for saving the model
     dir_model = f"model_{FLAGS.which_hw_model}"
     if not os.path.isdir(dir_model):
         print(f"creating directory: {dir_model}")
         os.makedirs(dir_model)
 
+    # save train and validation metrics in a csv file
     file_logger_train = os.path.join(dir_model, "train_metrics.csv")
     csv_writer = CSVWriter(
         file_name=file_logger_train,
@@ -134,17 +184,17 @@ def train_hw_recognizer(FLAGS):
     print(f"batch size: {FLAGS.batch_size}, image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
     print(f"num train samples: {num_train_samples}, num validation samples: {num_valid_samples}\n")
 
+    # load the right model
     if FLAGS.which_hw_model == "crnn":
         hw_model = CRNN(num_classes, FLAGS.image_height)
     elif FLAGS.which_hw_model == "stn_crnn":
         hw_model = STN_CRNN(num_classes, FLAGS.image_height, FLAGS.image_width)
-    elif FLAGS.which_hw_model == "stn_pp_crnn":
-        hw_model = STN_PP_CRNN(num_classes, FLAGS.image_height, FLAGS.image_width)
     else:
         print(f"unidentified option: {FLAGS.which_hw_model}")
         sys.exit(0)
     hw_model.to(device)
 
+    # load the right optimizer based on user option
     if FLAGS.which_optimizer == "adam":
         optimizer = torch.optim.Adam(hw_model.parameters(), lr=FLAGS.learning_rate, weight_decay=FLAGS.weight_decay)
     elif FLAGS.which_optimizer == "adadelta":
@@ -152,8 +202,10 @@ def train_hw_recognizer(FLAGS):
     else:
         print(f"unidentified option: {FLAGS.which_optimizer}")
         sys.exit(0)
+    # use the CTC loss as the objective function for training
     criterion = nn.CTCLoss(reduction="mean", zero_infinity=True)
 
+    # start training the model
     print(f"training of handwriting recognition model {FLAGS.which_hw_model} started\n")
     for epoch in range(1, FLAGS.num_epochs+1):
         time_start = time.time()
@@ -174,19 +226,21 @@ def train_hw_recognizer(FLAGS):
         )
         torch.save(hw_model.state_dict(), os.path.join(dir_model, f"{FLAGS.which_hw_model}_H_{FLAGS.image_height}_W_{FLAGS.image_width}_E_{epoch}.pth"))
     print(f"Training of handwriting recognition model {FLAGS.which_hw_model} complete!!!!")
+    # close the csv file
     csv_writer.close()
     return
 
 def main():
-    learning_rate = 5e-4
-    # 5e-4 for Adam, 1 for Adadelta
+    learning_rate = 3e-4
+    # 3e-4 for Adam, 1 for Adadelta
     weight_decay = 1e-4
+    # 1e-4 for Adam, 1e-8 for Adadelta
     batch_size = 64
     num_epochs = 100
     image_height = 32
     image_width = 768
     which_hw_model = "crnn"
-    which_optimizer = "adadelta"
+    which_optimizer = "adam"
     dir_dataset = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/"
 
     parser = argparse.ArgumentParser(
