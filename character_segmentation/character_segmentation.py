@@ -50,6 +50,7 @@ def update_binary_histogram(binary, widths, peaks, left, right):
 # case 1: join successive zero's
 # case 2: join zero between ones to the closest one
 def temp_binary_joining_rule(peaks, widths, binary):
+    max_dist = 10
     # TODO: incorporate max distance between peaks to join
     i = 1
     first_zero = 0 if binary[0] == 0 else None
@@ -62,6 +63,9 @@ def temp_binary_joining_rule(peaks, widths, binary):
         if binary[i] == 0:
             # first zero in sequence
             if not left_zero and right_zero:
+                # if left to here too far: update left and set new to current
+                # if here to right too far: update upto here and reset new
+                # if here too far from both: update left, keep current and go to right
                 first_zero = i
             # last zero in sequence
             elif left_zero and not right_zero:
