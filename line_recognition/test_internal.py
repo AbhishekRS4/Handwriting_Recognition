@@ -41,7 +41,7 @@ def test(hw_model, test_loader, device, list_test_files):
             log_probs = hw_model(images)
             pred_labels = ctc_decode(log_probs)
             labels = labels.cpu().numpy().tolist()
-            #print(labels, pred_labels[0])
+
             str_label = [HWRecogIAMDataset.LABEL_2_CHAR[i] for i in labels]
             str_label = "".join(str_label)
             str_pred = [HWRecogIAMDataset.LABEL_2_CHAR[i] for i in pred_labels[0]]
@@ -66,14 +66,16 @@ def test_hw_recognizer(FLAGS):
     dir_images = os.path.join(FLAGS.dir_dataset, "img")
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
+    # choose a device for testing
     if torch.cuda.is_available():
         device = torch.device("cuda")
     else:
-        print("CUDA device not found, so exiting....")
-        sys.exit(0)
+        device = torch.device("cpu")
 
+    # get the internal test set files
     test_x, test_y = split_dataset(file_txt_labels, for_train=False)
     num_test_samples = len(test_x)
+    # get the internal test set dataloader
     test_loader = get_dataloader_for_testing(
         test_x, test_y,
         dir_images=dir_images, image_height=FLAGS.image_height, image_width=FLAGS.image_width,
@@ -85,6 +87,7 @@ def test_hw_recognizer(FLAGS):
     print(f"image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
     print(f"num test samples: {num_test_samples}")
 
+    # load the right model
     if FLAGS.which_hw_model == "crnn":
         hw_model = CRNN(num_classes, FLAGS.image_height)
     elif FLAGS.which_hw_model == "stn_crnn":
@@ -95,6 +98,7 @@ def test_hw_recognizer(FLAGS):
     hw_model.to(device)
     hw_model.load_state_dict(torch.load(FLAGS.file_model))
 
+    # start testing of the model on the internal set
     print(f"testing of handwriting recognition model {FLAGS.which_hw_model} started\n")
     test(hw_model, test_loader, device, test_x)
     print(f"testing handwriting recognition model completed!!!!")
