@@ -2,6 +2,15 @@ import csv
 import json
 
 def write_json_file(file_json, dict_data):
+    """
+    ---------
+    Arguments
+    ---------
+    file_json : str
+        full path of json file to be saved
+    dict_data : dict
+        dictionary of params to be saved in the json file
+    """
     with open(file_json, "w", encoding="utf-8") as fh:
         fh.write(json.dumps(dict_data, indent=4))
     return
