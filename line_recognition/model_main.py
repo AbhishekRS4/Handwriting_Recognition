@@ -5,7 +5,25 @@ import torch.nn.functional as F
 from model_visual_features import ResNetFeatureExtractor, TPS_SpatialTransformerNetwork, PyramidPoolBlock
 
 class HW_RNN_Seq2Seq(nn.Module):
+    """
+    Visual Seq2Seq model using BiLSTM
+    """
     def __init__(self, num_classes, image_height, cnn_output_channels=512, num_feats_mapped_seq_hidden=128, num_feats_seq_hidden=256):
+        """
+        ---------
+        Arguments
+        ---------
+        num_classes : int
+            num of distinct characters (classes) in the dataset
+        image_height : int
+            image height
+        cnn_output_channels : int
+            number of channels output from the CNN visual feature extractor (default: 512)
+        num_feats_mapped_seq_hidden : int
+            number of features to be used in the mapped visual features as sequences (default: 128)
+        num_feats_seq_hidden : int
+            number of features to be used in the LSTM for sequence modeling (default: 256)
+        """
         super().__init__()
         self.output_height = image_height // 32
 
@@ -37,7 +55,25 @@ class HW_RNN_Seq2Seq(nn.Module):
 
 
 class CRNN(nn.Module):
+    """
+    Hybrid CNN - RNN model
+    CNN - Modified ResNet34 for visual features
+    RNN - BiLSTM for seq2seq modeling
+    """
     def __init__(self, num_classes, image_height, num_feats_mapped_seq_hidden=128, num_feats_seq_hidden=256):
+        """
+        ---------
+        Arguments
+        ---------
+        num_classes : int
+            num of distinct characters (classes) in the dataset
+        image_height : int
+            image height
+        num_feats_mapped_seq_hidden : int
+            number of features to be used in the mapped visual features as sequences (default: 128)
+        num_feats_seq_hidden : int
+            number of features to be used in the LSTM for sequence modeling (default: 256)
+        """
         super().__init__()
         self.visual_feature_extractor = ResNetFeatureExtractor()
         self.rnn_seq2seq_module = HW_RNN_Seq2Seq(num_classes, image_height, self.visual_feature_extractor.output_channels, num_feats_mapped_seq_hidden, num_feats_seq_hidden)
@@ -51,7 +87,28 @@ class CRNN(nn.Module):
 
 
 class STN_CRNN(nn.Module):
+    """
+    STN + CNN + RNN model
+    STN - Spatial Transformer Network for learning variable handwriting
+    CNN - Modified ResNet34 for visual features
+    RNN - BiLSTM for seq2seq modeling
+    """
     def __init__(self, num_classes, image_height, image_width, num_feats_mapped_seq_hidden=128, num_feats_seq_hidden=256):
+        """
+        ---------
+        Arguments
+        ---------
+        num_classes : int
+            num of distinct characters (classes) in the dataset
+        image_height : int
+            image height
+        image_width : int
+            image width
+        num_feats_mapped_seq_hidden : int
+            number of features to be used in the mapped visual features as sequences (default: 128)
+        num_feats_seq_hidden : int
+            number of features to be used in the LSTM for sequence modeling (default: 256)
+        """
         super().__init__()
         self.stn = TPS_SpatialTransformerNetwork(
             20,
@@ -68,7 +125,7 @@ class STN_CRNN(nn.Module):
         log_probs = self.rnn_seq2seq_module(visual_feats)
         return log_probs
 
-
+"""
 class STN_PP_CRNN(nn.Module):
     def __init__(self, num_classes, image_height, image_width, num_feats_mapped_seq_hidden=128, num_feats_seq_hidden=256):
         super().__init__()
@@ -88,3 +145,4 @@ class STN_PP_CRNN(nn.Module):
         pp_feats = self.pp_block(visual_feats)
         log_probs = self.rnn_seq2seq_module(pp_feats)
         return log_probs
+"""
