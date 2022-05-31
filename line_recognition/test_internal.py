@@ -14,6 +14,19 @@ from dataset import HWRecogIAMDataset, split_dataset, get_dataloader_for_testing
 
 
 def test(hw_model, test_loader, device, list_test_files):
+    """
+    ---------
+    Arguments
+    ---------
+    hw_model : object
+        handwriting recognition model object
+    test_loader : object
+        dataset loader object
+    device : str
+        device to be used for running the evaluation
+    list_test_files : list
+        list of all the test files
+    """
     hw_model.eval()
     num_test_samples = len(test_loader.dataset)
     num_test_batches = len(test_loader)
@@ -76,8 +89,6 @@ def test_hw_recognizer(FLAGS):
         hw_model = CRNN(num_classes, FLAGS.image_height)
     elif FLAGS.which_hw_model == "stn_crnn":
         hw_model = STN_CRNN(num_classes, FLAGS.image_height, FLAGS.image_width)
-    elif FLAGS.which_hw_model == "stn_pp_crnn":
-        hw_model = STN_PP_CRNN(num_classes, FLAGS.image_height, FLAGS.image_width)
     else:
         print(f"unidentified option : {FLAGS.which_hw_model}")
         sys.exit(0)
