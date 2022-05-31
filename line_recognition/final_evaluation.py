@@ -140,6 +140,7 @@ def test_hw_recognizer(FLAGS):
     print(f"model: {FLAGS.which_hw_model}")
     print(f"image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
 
+    # load the right model
     if FLAGS.which_hw_model == "crnn":
         hw_model = CRNN(num_classes, FLAGS.image_height)
     elif FLAGS.which_hw_model == "stn_crnn":
@@ -148,6 +149,7 @@ def test_hw_recognizer(FLAGS):
         print(f"unidentified option : {FLAGS.which_hw_model}")
         sys.exit(0)
 
+    # choose a device for evaluation
     if torch.cuda.is_available():
         device = torch.device("cuda")
     else:
@@ -156,10 +158,12 @@ def test_hw_recognizer(FLAGS):
     hw_model.to(device)
     hw_model.load_state_dict(torch.load(FLAGS.file_model))
 
+    # get test set dataloader
     test_loader = get_dataloader_for_evaluation(
         dir_images=FLAGS.dir_images, image_height=FLAGS.image_height, image_width=FLAGS.image_width,
     )
 
+    # start the evaluation on the final test set
     print(f"final evaluation of handwriting recognition model {FLAGS.which_hw_model} started\n")
     final_eval(hw_model, device, test_loader, file_txt_preds, FLAGS.dir_images)
     print(f"final evaluation of handwriting recognition model completed!!!!")
