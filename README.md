@@ -46,7 +46,7 @@ dataset is located in the correct folder, using the correct naming scheme.
 * The python package dependencies can be found in [requirements.txt](requirements.txt)
 
 ### Running the final trained model to generate predictions
-* The predictions of the model will be saved in individual txt files i.e. one for each image, in a directory names `results`.
+* The predictions of the model will be saved in individual txt files i.e. one for each image, in a directory named `results`.
 The script [line_recognition/final_evaluation.py](line_recognition/final_evaluation.py) can be run in the following way.
 ```
 python3 final_evaluation.py --dir_images <path_to_dir> --file_model <path_to_model_file>
@@ -58,6 +58,7 @@ Berat Kurar, B., Cohen, R., Droby, A., Rabaev, I. & El-Sana, J. (2020). Learning
 Handwritten Documents.
 Applied Sciences, 10, 8276; doi:10.3390/app10228276.
 [paper link](https://www.researchgate.net/profile/Berat-Barakat/publication/347109911_Learning-Free_Text_Line_Segmentation_for_Historical_Handwritten_Documents/links/6005e26a45851553a053b11c/Learning-Free-Text-Line-Segmentation-for-Historical-Handwritten-Documents.pdf)
+
 <a id="2">[2]</a>
 Dutta, Kartik & Krishnan, Praveen & Mathew, Minesh & Jawahar, C.V.. (2018). Improving CNN-RNN Hybrid Networks for Handwriting Recognition.
 80-85, doi:10.1109/ICFHR-2018.2018.00023.
