@@ -1,6 +1,6 @@
 # Handwriting Recognition
 ***
-* This repository contains all code for the three tasks of the Handwriting Recognition course of the University of Groningen.
+* This repository contains all code for the three tasks of the [Handwriting Recognition](https://www.rug.nl/ocasys/fwn/vak/show?code=WMAI019-05), Master's course of the University of Groningen.
 
 ## Team members
 * Jeroen
