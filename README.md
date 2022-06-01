@@ -42,6 +42,9 @@ python setup.py install
 dataset is located in the correct folder, using the correct naming scheme.
 
 ## IAM Dataset
+### Code Inspiration
+* Some code inspired from [https://github.com/GitYCC/crnn-pytorch](https://github.com/GitYCC/crnn-pytorch) and [https://github.com/kris314/deep-text-recognition-benchmark](https://github.com/kris314/deep-text-recognition-benchmark) and
+
 ### Setup
 * The python package dependencies can be found in [requirements.txt](requirements.txt)
 
