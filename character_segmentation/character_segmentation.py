@@ -135,7 +135,7 @@ def segment_characters(peaks, widths, image):
             start = i + 1
 
         new_peaks, new_widths = binary_joining_rule(peaks[start:end], widths[start:end], binary[start:end])
-        characters = characters +  split_image_to_peaks(image, new_peaks, new_widths)
+        characters = characters + split_image_to_peaks(image, new_peaks, new_widths)
     else:
         new_peaks, new_widths = binary_joining_rule(peaks, widths, binary)
         characters = characters + split_image_to_peaks(image, new_peaks, new_widths)
