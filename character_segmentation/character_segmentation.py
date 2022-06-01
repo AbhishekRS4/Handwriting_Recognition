@@ -107,6 +107,7 @@ def segment_characters(peaks, widths, image):
     max_gap = 20
     binary = []
     split_locations = []
+    characters = []
 
     # compute average width
     width_avg = np.mean(widths)
@@ -130,14 +131,14 @@ def segment_characters(peaks, widths, image):
 
         for i in split_locations:
             new_peaks, new_widths = binary_joining_rule(peaks[start:i + 1], widths[start:i + 1], binary[start:i + 1])
-            characters = split_image_to_peaks(image, new_peaks, new_widths)
+            characters = characters + split_image_to_peaks(image, new_peaks, new_widths)
             start = i + 1
 
         new_peaks, new_widths = binary_joining_rule(peaks[start:end], widths[start:end], binary[start:end])
-        characters = split_image_to_peaks(image, new_peaks, new_widths)
+        characters = characters +  split_image_to_peaks(image, new_peaks, new_widths)
     else:
         new_peaks, new_widths = binary_joining_rule(peaks, widths, binary)
-        characters = split_image_to_peaks(image, new_peaks, new_widths)
+        characters = characters + split_image_to_peaks(image, new_peaks, new_widths)
 
     return characters
 
@@ -185,9 +186,10 @@ def apply_histogram_segmentation(file, plot):
     # characters = split_image_to_peaks(image, binary_peaks, widths)
     characters = segment_characters(binary_peaks, widths[0], image)
 
+    return characters
 
 if __name__ == "__main__":
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
     file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
-    apply_histogram_segmentation(file, True)
+    _ = apply_histogram_segmentation(file, True)

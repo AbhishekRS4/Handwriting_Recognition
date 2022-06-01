@@ -43,7 +43,7 @@ def apply_mask(image, mask):
 
 
 # crop mask and image to outline of mask to reduce image size
-def get_segment_crop(img,tol=0, mask=None):
+def get_segment_crop(img, tol=0, mask=None):
     if mask is None:
         mask = img > tol
 
