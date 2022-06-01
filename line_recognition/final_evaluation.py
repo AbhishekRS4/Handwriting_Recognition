@@ -86,7 +86,7 @@ def get_dataloader_for_evaluation(dir_images, image_height=32, image_width=768, 
     )
     return test_loader
 
-def final_eval(hw_model, device, test_loader, file_txt_preds, dir_images):
+def final_eval(hw_model, device, test_loader, dir_images, dir_results="results"):
     """
     ---------
     Arguments
@@ -97,16 +97,19 @@ def final_eval(hw_model, device, test_loader, file_txt_preds, dir_images):
         device to be used for running the evaluation
     test_loader : object
         dataset loader object
-    file_txt_preds : str
-        full path to text file where results need to be stored
     dir_images : str
         full path to directory containing test images
+    dir_results : str
+        relative path to directory to save the predictions as txt files
     """
     hw_model.eval()
     count = 0
     num_test_samples = len(test_loader.dataset)
     list_test_files = os.listdir(dir_images)
-    fh_preds = open(file_txt_preds, "w", encoding="utf-8", newline="\n")
+
+    if not os.path.isdir(dir_results):
+        print(f"creating directory: {dir_results}")
+        os.makedirs(dir_results)
 
     with torch.no_grad():
         for image_test in test_loader:
@@ -123,16 +126,15 @@ def final_eval(hw_model, device, test_loader, file_txt_preds, dir_images):
             str_pred = [DatasetFinalEval.LABEL_2_CHAR[i] for i in pred_labels[0]]
             str_pred = "".join(str_pred)
 
-            fh_preds.write(file_test+"\n")
-            fh_preds.write(str_pred+"\n\n")
+            with open(os.path.join(dir_results, file_test+".txt"), "w", encoding="utf-8", newline="\n") as fh_pred:
+                fh_pred.write(str_pred)
 
             print(f"progress: {count}/{num_test_samples}, test file: {list_test_files[count-1]}")
             print(f"{str_pred}\n")
-    fh_preds.close()
+    print(f"predictions saved in directory: ./{dir_results}\n")
     return
 
 def test_hw_recognizer(FLAGS):
-    file_txt_preds = f"predictions_{FLAGS.which_hw_model}.txt"
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
     num_classes = len(DatasetFinalEval.LABEL_2_CHAR) + 1
@@ -165,7 +167,7 @@ def test_hw_recognizer(FLAGS):
 
     # start the evaluation on the final test set
     print(f"final evaluation of handwriting recognition model {FLAGS.which_hw_model} started\n")
-    final_eval(hw_model, device, test_loader, file_txt_preds, FLAGS.dir_images)
+    final_eval(hw_model, device, test_loader, FLAGS.dir_images)
     print(f"final evaluation of handwriting recognition model completed!!!!")
     return
 
