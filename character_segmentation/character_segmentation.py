@@ -32,6 +32,7 @@ def split_characters(image, peaks, widths):
     return characters
 
 
+# this function updates the lists representing the binary representation of the histogram
 def update_binary_histogram(binary, widths, peaks, left, right):
     new_width = (peaks[right] + widths[right] / 2) - (peaks[left] - widths[left] / 2)
     new_peak = peaks[left] - widths[left] / 2 + new_width / 2
@@ -49,11 +50,18 @@ def update_binary_histogram(binary, widths, peaks, left, right):
 
 # case 1: join successive zero's
 # case 2: join zero between ones to the closest one
-def temp_binary_joining_rule(peaks, widths, binary):
-    max_dist = 10
-    # TODO: incorporate max distance between peaks to join
+def binary_joining_rule(peaks, widths, binary):
     i = 1
-    first_zero = 0 if binary[0] == 0 else None
+
+    # handle first 0 in sequence
+    if binary[0] == 0 and len(binary) > 1:
+        if binary[1] == 0:
+            first_zero = 0
+        else:
+            binary, widths, peaks = update_binary_histogram(binary, widths, peaks, 0, 1)
+            first_zero = None
+    else:
+        first_zero = None
 
     while i < len(binary) - 1:
         left_zero = True if first_zero else False
@@ -61,85 +69,33 @@ def temp_binary_joining_rule(peaks, widths, binary):
 
         # only joining happens with peaks labeled as 0
         if binary[i] == 0:
-            # first zero in sequence
             if not left_zero and right_zero:
-                # if left to here too far: update left and set new to current
-                # if here to right too far: update upto here and reset new
-                # if here too far from both: update left, keep current and go to right
                 first_zero = i
             # last zero in sequence
             elif left_zero and not right_zero:
                 binary, widths, peaks = update_binary_histogram(binary, widths, peaks, first_zero, i)
-
-                # new_width = (peaks[i] + widths[i] / 2) - (peaks[first_zero] - widths[first_zero] / 2)
-                # new_peak = peaks[first_zero] - widths[first_zero] / 2 + new_width / 2
-                #
-                # binary = np.delete(binary, np.arange(first_zero, i+1))
-                # widths = np.delete(widths, np.arange(first_zero, i+1))
-                # peaks = np.delete(peaks, np.arange(first_zero, i+1))
-                #
-                # binary = np.insert(binary, first_zero, 1)
-                # widths = np.insert(widths, first_zero, new_width)
-                # peaks = np.insert(peaks, first_zero, new_peak)
-
                 i = first_zero
                 first_zero = None
             # zero between two ones
             elif not left_zero and not right_zero:
                 # left peak is closer
-                if peaks[i-1] + widths[i-1] / 2 < peaks[i+1] - widths[i+1] / 2:
+                if (peaks[i] - widths[i] / 2) - (peaks[i-1] + widths[i-1] / 2) < \
+                        (peaks[i+1] - widths[i+1] / 2) - (peaks[i] + widths[i] / 2):
                     binary, widths, peaks = update_binary_histogram(binary, widths, peaks, i-1, i)
-                    # new_width = (peaks[i] + widths[i] / 2) - (peaks[i-1] - widths[i-1] / 2)
-                    # new_peak = peaks[i-1] - widths[i-1] / 2 + new_width / 2
-                    #
-                    # binary = np.delete(binary, np.arange(i-1, i+1))
-                    # widths = np.delete(widths, np.arange(i-1, i+1))
-                    # peaks = np.delete(peaks, np.arange(i-1, i+1))
-                    #
-                    # binary = np.insert(binary, i-1, 1)
-                    # widths = np.insert(widths, i-1, new_width)
-                    # peaks = np.insert(peaks, i-1, new_peak)
-
                     i -= 1
                 # right peak is closer
                 else:
                     binary, widths, peaks = update_binary_histogram(binary, widths, peaks, i, i + 1)
-                    # new_width = (peaks[i+1] + widths[i+1] / 2) - (peaks[i] - widths[i] / 2)
-                    # new_peak = peaks[i] - widths[i] / 2 + new_width / 2
-                    #
-                    # binary = np.delete(binary, np.arange(i, i+2))
-                    # widths = np.delete(widths, np.arange(i, i+2))
-                    # peaks = np.delete(peaks, np.arange(i, i+2))
-                    #
-                    # binary = np.insert(binary, i, 1)
-                    # widths = np.insert(widths, i, new_width)
-                    # peaks = np.insert(peaks, i, new_peak)
 
                 first_zero = None
         i += 1
 
     # handle last index if last 0 in sequence
-    if binary[i] == 0 and binary[i-1] == 0:
+    if i < len(binary) and binary[i] == 0 and binary[i-1] == 0:
         _, widths, peaks = update_binary_histogram(binary, widths, peaks, first_zero, i)
-        # new_width = (peaks[i] + widths[i] / 2) - (peaks[first_zero] - widths[first_zero] / 2)
-        # new_peak = peaks[first_zero] - widths[first_zero] / 2 + new_width / 2
-        #
-        # widths = np.delete(widths, np.arange(first_zero, i+1))
-        # peaks = np.delete(peaks, np.arange(first_zero, i+1))
-        #
-        # widths = np.insert(widths, first_zero, new_width)
-        # peaks = np.insert(peaks, first_zero, new_peak)
     # handle last index if 0 preceded by a 1
-    elif binary[i] == 0:
+    elif i < len(binary) and binary[i] == 0:
         binary, widths, peaks = update_binary_histogram(binary, widths, peaks, i - 1, i)
-        # new_width = (peaks[i] + widths[i] / 2) - (peaks[i - 1] - widths[i - 1] / 2)
-        # new_peak = peaks[i - 1] - widths[i - 1] / 2 + new_width / 2
-        #
-        # widths = np.delete(widths, np.arange(i - 1, i + 1))
-        # peaks = np.delete(peaks, np.arange(i - 1, i + 1))
-        #
-        # widths = np.insert(widths, i - 1, new_width)
-        # peaks = np.insert(peaks, i - 1, new_peak)
 
     return peaks, widths
 
@@ -148,11 +104,12 @@ def temp_binary_joining_rule(peaks, widths, binary):
 # Rajput, Jayanthi and Sreedevi (2019)
 def segment_characters(peaks, widths, image):
     k = 0.7
+    max_gap = 20
+    binary = []
+    split_locations = []
 
     # compute average width
     width_avg = np.mean(widths)
-
-    binary = []
 
     # label peaks
     for width in widths:
@@ -161,9 +118,26 @@ def segment_characters(peaks, widths, image):
         else:
             binary.append(1)
 
-    new_peaks, new_widths = temp_binary_joining_rule(peaks, widths, binary)
+    # split labeled array based on maximum distance between two characters to avoid joining over long distance
+    for i in range(len(binary) - 1):
+        if ((peaks[i + 1] - widths[i + 1] / 2) - (peaks[i] + widths[i] / 2)) > max_gap:
+            split_locations.append(i)
 
-    characters = split_characters(image, new_peaks, new_widths)
+    # segment all characters
+    if split_locations:
+        start = 0
+        end = len(binary)
+
+        for i in split_locations:
+            new_peaks, new_widths = binary_joining_rule(peaks[start:i + 1], widths[start:i + 1], binary[start:i + 1])
+            characters = split_characters(image, new_peaks, new_widths)
+            start = i + 1
+
+        new_peaks, new_widths = binary_joining_rule(peaks[start:end], widths[start:end], binary[start:end])
+        characters = split_characters(image, new_peaks, new_widths)
+    else:
+        new_peaks, new_widths = binary_joining_rule(peaks, widths, binary)
+        characters = split_characters(image, new_peaks, new_widths)
 
     return characters
 
@@ -196,7 +170,7 @@ def apply_histogram_segmentation(file):
     peaks, _ = sp.find_peaks(inv_data)
 
     # Plot binary graph
-    binarized = (bins > np.mean(bins)).astype(np.int_)
+    binarized = (bins > 0.9*np.mean(bins)).astype(np.int_)
     # binarized = (bins > np.mean(bins)/2).astype(np.int_)
 
     ax[2].set_title(' binarized ')
