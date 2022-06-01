@@ -18,7 +18,7 @@ def trim_sides(image):
 
 
 # this function takes the locations of the binarized valleys and splits the image on these points
-def split_characters(image, peaks, widths):
+def split_image_to_peaks(image, peaks, widths):
     characters = []
 
     for i in range(len(peaks)):
@@ -130,20 +130,20 @@ def segment_characters(peaks, widths, image):
 
         for i in split_locations:
             new_peaks, new_widths = binary_joining_rule(peaks[start:i + 1], widths[start:i + 1], binary[start:i + 1])
-            characters = split_characters(image, new_peaks, new_widths)
+            characters = split_image_to_peaks(image, new_peaks, new_widths)
             start = i + 1
 
         new_peaks, new_widths = binary_joining_rule(peaks[start:end], widths[start:end], binary[start:end])
-        characters = split_characters(image, new_peaks, new_widths)
+        characters = split_image_to_peaks(image, new_peaks, new_widths)
     else:
         new_peaks, new_widths = binary_joining_rule(peaks, widths, binary)
-        characters = split_characters(image, new_peaks, new_widths)
+        characters = split_image_to_peaks(image, new_peaks, new_widths)
 
     return characters
 
 
 # this function creates a histogram from the input image and determines the splits based on the binarized histogram
-def apply_histogram_segmentation(file):
+def apply_histogram_segmentation(file, plot):
     image = cv2.imread(file)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     _, image = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -154,38 +154,35 @@ def apply_histogram_segmentation(file):
     for i in range(len(im_transp)):
         bins.append(np.sum(im_transp[i] == 0))
 
-    fig, ax = plt.subplots(3, 1)
-    fig.tight_layout(h_pad=2)
+    # Plot binary graph TUNE FACTOR FOR DIFFERENT THRESHOLDING
+    binarized = (bins > 0.9 * np.mean(bins)).astype(np.int_)
 
-    # show original image
-    ax[0].set_title(' image ')
-    plt.set_cmap('gray')
-    ax[0].imshow(image)
+    if plot:
+        fig, ax = plt.subplots(3, 1)
+        fig.tight_layout(h_pad=2)
 
-    # Plot pixel graph
-    ax[1].set_title(' histogram ')
-    ax[1].stairs(bins, fill=False)
-    ax[1].set_xlim([0, len(bins)])
-    inv_data = np.multiply(bins, -1)
-    peaks, _ = sp.find_peaks(inv_data)
+        # show original image
+        ax[0].set_title(' image ')
+        plt.set_cmap('gray')
+        ax[0].imshow(image)
 
-    # Plot binary graph
-    binarized = (bins > 0.9*np.mean(bins)).astype(np.int_)
-    # binarized = (bins > np.mean(bins)/2).astype(np.int_)
+        # Plot pixel graph
+        ax[1].set_title(' histogram ')
+        ax[1].stairs(bins, fill=False)
+        ax[1].set_xlim([0, len(bins)])
 
-    ax[2].set_title(' binarized ')
-    ax[2].stairs(binarized, fill=False, color="orange")
-    binary_valleys, _ = sp.find_peaks(np.multiply(binarized, -1))
-    ax[2].vlines(x=binary_valleys, ymin=0, ymax=1, colors="red")
-    ax[2].set_xlim([0, len(binarized)])
+        ax[2].set_title(' binarized ')
+        ax[2].stairs(binarized, fill=False, color="orange")
+        binary_valleys, _ = sp.find_peaks(np.multiply(binarized, -1))
+        ax[2].vlines(x=binary_valleys, ymin=0, ymax=1, colors="red")
+        ax[2].set_xlim([0, len(binarized)])
 
-    plt.show()
-
-    # characters = split_characters_at_valley(image, binary_valleys)
+        plt.show()
 
     binary_peaks, _ = sp.find_peaks(binarized)
     widths = sp.peak_widths(binarized, binary_peaks, rel_height=1)
 
+    # characters = split_image_to_peaks(image, binary_peaks, widths)
     characters = segment_characters(binary_peaks, widths[0], image)
 
 
@@ -193,4 +190,4 @@ if __name__ == "__main__":
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
     file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
-    apply_histogram_segmentation(file)
+    apply_histogram_segmentation(file, True)

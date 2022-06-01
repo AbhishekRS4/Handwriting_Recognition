@@ -68,7 +68,7 @@ def extract_masks(file):
 
 
 if __name__ == "__main__":
-    separated_masks = extract_masks('C:\GitHub_Jeroen\Handwriting_Recognition\data\\task1\image-data\P106-Fg002-R-C01-R01-binarized.jpg')
+    separated_masks = extract_masks(os.path.join(ROOT_DIR, "LineExtraction2\\test_file.jpg"))
     i = 1
 
     for mask in separated_masks:

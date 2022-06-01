@@ -9,9 +9,6 @@ import skimage
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# TODO:
-#   -   character segmentation
-
 
 def get_subdirectory(sd):
     dir = os.path.join(os.getcwd(), f'{sd}')
@@ -65,10 +62,8 @@ def extract_lines(file, masks, idx):
         crop_im, crop_mask = get_segment_crop(image, mask=mask)
         result = apply_mask(crop_im, crop_mask)
 
-        # cv2.imshow("result", result)
-        # cv2.waitKey(0)
-
-        print("writing as: ", f"{get_subdirectory('crops')}/image_" + str(idx) + "_crop_" + str(i) + ".jpg")
+        # all crops are written to line_segmentation/crops/image_filenr_crop_cropnr.jpg
+        # print("writing as: ", f"{get_subdirectory('crops')}/image_" + str(idx) + "_crop_" + str(i) + ".jpg")
         cv2.imwrite(f"{get_subdirectory('crops')}/image_" + str(idx) + "_crop_" + str(i) + ".jpg", result)
 
         i += 1
