@@ -70,53 +70,46 @@ hebrew_decimal_codes = {
     "zayin": 1494,
 }
 
-hebrew_label_encodings = {
-
-}
-
 def start_dss_recognize(FLAGS):
-    # list_image_files = os.listdir(FLAGS.dir_images)
-    # list_image_files = [os.path.join(FLAGS.dir_images, f) for f in list_image_files]
+    model = load_alexnet.model()
+    expected_width = 64
+    expected_height = 64
+
     list_image_files = dl.read_binarized_images(FLAGS.dir_images)
 
+    if not os.path.isdir(FLAGS.dir_save_predictions):
+        os.makedirs(FLAGS.dir_save_predictions)
+
     for image_file in list_image_files:
-        # file_handler = open(os.path.join(FLAGS.dir_save_predictions, image_file+".txt"), encoding="utf-8", mode="w")
+        print(image_file)
+        file_handler = open(os.path.join(FLAGS.dir_save_predictions, os.path.basename(image_file)+".txt"), encoding="utf-8", mode="w")
         separated_masks = rmc.extract_masks(image_file)
         line_images = bme.extract_lines(image_file, separated_masks)
-        print(line_images)
 
         for line_image in line_images:
             segmented_chars = cs.apply_histogram_segmentation(line_image)
-            print(segmented_chars)
-
             for word in segmented_chars:
-                print(word)
-                load_alexnet()
-                expected_width = 64
-                expected_height = 64
+                for char in word:
+                    i = 0
+                    original_image = cv2.cvtColor(char, cv2.COLOR_GRAY2RGB)
+                    image = cv2.resize(original_image, (expected_width, expected_height), cv2.INTER_LINEAR)
+                    image = image.astype("float") / 255.0
+                    image = img_to_array(image)
+                    image = np.expand_dims(image, axis=0)
+                    prediction_char = model.predict(image)
+                    position_char = np.argmax(prediction_char)
 
-                segmented_characters_path = 'testing_model'
-                for subdir, dirs, files in os.walk(segmented_characters_path):
-                        predicted_char = []
-                        i = 0
-                        for f in files:
-                            original_image = cv2.imread(f"{subdir}/{f}")
-                            image = cv2.resize(original_image, (expected_width, expected_height), cv2.INTER_LINEAR)
-                            image = image.astype("float") / 255.0
-                            image = img_to_array(image)
-                            image = np.expand_dims(image, axis=0)
-                            prediction_char = model.predict(image)
-                            position_char = np.argmax(prediction_char)
-                            print(hebrew_characters[position_char])
-                            #if Viterbi > x:
-                            #prob.append(hebrew_characters) #np.argmax
-                            i = i + 1
-                        #need to reverse, since  hebrew characters are read from right to left
-                        #predicted_char.reverse()
-                
-                    
-        #     file_handler.write("\n")
-        # file_handler.close()
+                    pred_char = hebrew_characters[position_char]
+                    hebrew = hebrew_decimal_codes[pred_char]
+
+                    file_handler.write(chr(hebrew))
+
+                    #if Viterbi > x:
+                    #prob.append(hebrew_characters) #np.argmax
+                    i = i + 1
+                file_handler.write(" ")
+            file_handler.write("\n")
+        file_handler.close()
     return
 
 def main():

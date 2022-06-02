@@ -1,5 +1,5 @@
-from LineExtraction2 import run_matlab_code as rmc
-import dataloader_task1 as ds
+from line_segmentation.LineExtraction2 import run_matlab_code as rmc
+import line_segmentation.dataloader_task1 as ds
 import numpy as np
 import os
 import cv2

@@ -1,7 +1,7 @@
 import regex as re
 import os
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # this function read the binarized images from the data/task1/image-data folder

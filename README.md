@@ -1,6 +1,6 @@
 # Handwriting Recognition
 ***
-* This repository contains all code for the three tasks of the [Handwriting Recognition](https://www.rug.nl/ocasys/fwn/vak/show?code=WMAI019-05), Master's course of the University of Groningen.
+This repository contains all code for the three tasks of the [Handwriting Recognition](https://www.rug.nl/ocasys/fwn/vak/show?code=WMAI019-05), Master's course of the University of Groningen.
 
 ## Team members
 * Jeroen
@@ -8,9 +8,14 @@
 * Manuel
 * Abhishek
 
+***
+
 ## Dead Sea Scrolls
+**_NOTE:_** Unfortunately, the line segmentation method used in this pipeline was only able to be implemented in Windows.
+Documentation on the method was not sufficient to find an appropriate adaptation to Linux and Mac. Our apologies for this inconvenience.
+
 ### Matlab engine Setup
-* For the line segmentation, two approaches are used: a histogram method and a blob-line method. The latter uses the
+For the line segmentation, two approaches are used: a histogram method and a blob-line method. The latter uses the
 implementation by Kurar Barakat et al.[[1]](#1) in Matlab. For this to function correctly, the user must have the MATLAB Engine
 installed. This enables MATLAB code to be run directly from a Python script. The MATLAB engine can be installed as follows:
 
@@ -28,35 +33,36 @@ cd "MATLABROOT\extern\engines\python"
 python3 setup.py install
 ```
 
-#### Mac
-```
-cd "MATLABROOT/extern/engines/python"
-python3 setup.py install
-```
-On Linux `sudo` may be required if one encounters an error related to permissions. In such a case, use the following
-```
-sudo python3 setup.py install
-```
-
 ### Matlab Dependencies
 * Image Processing Toolbox
-* (Windows) MATLAB Support for MinGW-w64 C/C++ Compiler 
+* MATLAB Support for MinGW-w64 C/C++ Compiler 
 * MATLAB Compiler
 * MATLAB Compiler SDK
 
 ### Python Package dependencies
-* The python package dependencies can be found in [requirements.txt](requirements.txt)
+The python package dependencies can be found in [requirements.txt](requirements.txt)
 
-### Running
-* To run the full pipeline for the line segmentation, character segmentation and character recognition, first ensure the
-dataset is located in the correct folder, using the correct naming scheme.
+### Running the pipeline
+To run the full pipeline for the line segmentation, character segmentation and character recognition, first ensure the
+dataset is using the correct naming scheme. This means all binarized versions of files contain 'binarized' in the filename.
+For example, a file can be named: `P123-Fg001-R-C01-R01-binarized.jpg`
+
+For the pipeline to take the data, either deposite all image files in the `image-data` folder in the `dss_recognition` directory,
+or specify the location as a command line argument. By default, the resulting text files of the model are saved to a `results` directory in the `dss_recognition` directory.
+However, if the user prefers, a custom saving directory can also be used by specifying this in the command line as well.
+
+Running the pipeline is done by running the following file from the `dss_recognition` directory:
+
+```
+python dss_recognizer.py --dir_images <path_to_dir> --dir_save_predictions <path_to_dir>
+```
 
 ## IAM Dataset
 ### Code Inspiration
-* Some code inspired from [https://github.com/GitYCC/crnn-pytorch](https://github.com/GitYCC/crnn-pytorch) and [https://github.com/kris314/deep-text-recognition-benchmark](https://github.com/kris314/deep-text-recognition-benchmark)
+Some code inspired from [https://github.com/GitYCC/crnn-pytorch](https://github.com/GitYCC/crnn-pytorch) and [https://github.com/kris314/deep-text-recognition-benchmark](https://github.com/kris314/deep-text-recognition-benchmark)
 
 ### Setup
-* The python package dependencies can be found in [requirements.txt](requirements.txt)
+The python package dependencies can be found in [requirements.txt](requirements.txt)
 
 ### Running the final trained model to generate predictions
 * The predictions of the model will be saved in individual txt files i.e. one for each image, in a directory named `results`.

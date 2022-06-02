@@ -10,6 +10,16 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # this function trims white from the left and the right of the input image
+def trim_top_bottom(image):
+    zero_row_ind, _ = np.where(image == 0)
+
+    first = min(zero_row_ind)
+    last = max(zero_row_ind)
+
+    return image[first:last, :]
+
+
+# this function trims white from the left and the right of the input image
 def trim_sides(image):
     _, zero_col_ind = np.where(image == 0)
 
@@ -112,6 +122,7 @@ def segment_characters(peaks, widths, image):
     characters = []
 
     # compute average width
+    print(widths)
     width_avg = np.mean(widths)
 
     # label peaks
@@ -140,7 +151,7 @@ def segment_characters(peaks, widths, image):
         characters.append(split_image_to_peaks(image, new_peaks, new_widths))
     else:
         new_peaks, new_widths = binary_joining_rule(peaks, widths, binary)
-        characters = characters + split_image_to_peaks(image, new_peaks, new_widths)
+        characters.append(split_image_to_peaks(image, new_peaks, new_widths))
 
     return characters
 
@@ -150,6 +161,7 @@ def apply_histogram_segmentation(image, plot=False):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     _, image = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     image = trim_sides(image)
+    image = trim_top_bottom(image)
     im_transp = image.T
     bins = []
 
@@ -158,6 +170,8 @@ def apply_histogram_segmentation(image, plot=False):
 
     # Plot binary graph TUNE FACTOR FOR DIFFERENT THRESHOLDING
     binarized = (bins > 0.9 * np.mean(bins)).astype(np.int_)
+    binarized = np.insert(binarized, 0, 0)
+    binarized = np.append(binarized, 0)
 
     if plot:
         fig, ax = plt.subplots(3, 1)
@@ -188,8 +202,8 @@ def apply_histogram_segmentation(image, plot=False):
     characters = segment_characters(binary_peaks, widths[0], image)
 
     # return in reversed order for right to left
-    return [i[::-1] for i in characters[::-1]]
-    # return characters
+    # return [i[::-1] for i in characters[::-1]]
+    return characters
 
 # this is the main function loading from the crops folder
 def character_segmentation():
@@ -209,7 +223,8 @@ def character_segmentation():
 if __name__ == "__main__":
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
-    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
+    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_16_crop_9.jpg')
     words = apply_histogram_segmentation(cv2.imread(file), True)
     for word in words:
         for char in word:
