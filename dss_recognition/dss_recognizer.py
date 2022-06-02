@@ -1,13 +1,14 @@
 import argparse
 import cv2
 import os
+from tensorflow import keras
+from keras.preprocessing.image import img_to_array
 from character_segmentation import character_segmentation as cs
 from line_segmentation import blob_line_mask_extraction as bme
 from line_segmentation.LineExtraction2 import run_matlab_code as rmc
 import dataloader_task1 as dl
 from character_recognition import load_alexnet
 import numpy as np
-import keras
 
 hebrew_characters = {
     0:'alef',
