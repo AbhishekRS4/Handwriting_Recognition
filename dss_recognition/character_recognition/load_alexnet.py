@@ -1,15 +1,7 @@
-import argparse
-import numpy as np
 from tensorflow import keras
-from keras.models import load_model
-from keras.preprocessing.image import img_to_array
-import cv2
-import os
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D
-from keras.layers.normalization import BatchNormalization
 import numpy as np
-
 
 
 def model(load_weights=True):
@@ -68,6 +60,6 @@ def model(load_weights=True):
 
     model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metrics=["accuracy"])
     if load_weights:
-         model.load_weights('alexnet.h5')
+         model.load_weights('character_recognition/alexnet.h5')
 
     return model
