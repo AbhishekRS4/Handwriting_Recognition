@@ -133,11 +133,11 @@ def segment_characters(peaks, widths, image):
 
         for i in split_locations:
             new_peaks, new_widths = binary_joining_rule(peaks[start:i + 1], widths[start:i + 1], binary[start:i + 1])
-            characters = characters + split_image_to_peaks(image, new_peaks, new_widths)
+            characters.append(split_image_to_peaks(image, new_peaks, new_widths))
             start = i + 1
 
         new_peaks, new_widths = binary_joining_rule(peaks[start:end], widths[start:end], binary[start:end])
-        characters = characters + split_image_to_peaks(image, new_peaks, new_widths)
+        characters.append(split_image_to_peaks(image, new_peaks, new_widths))
     else:
         new_peaks, new_widths = binary_joining_rule(peaks, widths, binary)
         characters = characters + split_image_to_peaks(image, new_peaks, new_widths)
@@ -188,8 +188,8 @@ def apply_histogram_segmentation(image, plot=False):
     characters = segment_characters(binary_peaks, widths[0], image)
 
     # return in reversed order for right to left
-    # return [i[::-1] for i in characters[::-1]]
-    return characters
+    return [i[::-1] for i in characters[::-1]]
+    # return characters
 
 # this is the main function loading from the crops folder
 def character_segmentation():
@@ -203,17 +203,16 @@ def character_segmentation():
             segmented_lines.append(apply_histogram_segmentation(image))
         segmented_images.append(segmented_lines)
 
-    return(segmented_images)
-
-
-# TODO:
-#  -    have return for crops as well
-#  -    return characters in bunches as words
-#  -    read from crops and separate by image number
+    return segmented_images
 
 
 if __name__ == "__main__":
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
     file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
-    _ = apply_histogram_segmentation(cv2.imread(file), True)
+    words = apply_histogram_segmentation(cv2.imread(file), True)
+    for word in words:
+        for char in word:
+            cv2.imshow("split", char)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()

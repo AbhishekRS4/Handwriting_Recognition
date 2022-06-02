@@ -52,19 +52,20 @@ def start_dss_recognize(FLAGS):
         # file_handler = open(os.path.join(FLAGS.dir_save_predictions, image_file+".txt"), encoding="utf-8", mode="w")
         separated_masks = rmc.extract_masks(image_file)
         line_images = bme.extract_lines(image_file, separated_masks)
+        print(line_images)
 
         for line_image in line_images:
             segmented_chars = cs.apply_histogram_segmentation(line_image)
+            print(segmented_chars)
 
             for word in segmented_chars:
+                print(word)
                 for char in word:
-                    #predict char using network
-                    # label = network.predict(segmented_char)
-                    # handle left to right or right to left chars
-                    # file_handler.write(chr(hebrew_decimal_codes[hebrew_label_encodings[label]]))
-                    cv2.imshow("char", char)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    # RIGHT TO LEFT CHARACTER PER CHARACTER
+                    pass
+                    # cv2.imshow("char", char)
+                    # cv2.waitKey(0)
+                    # cv2.destroyAllWindows()
 
         #     file_handler.write("\n")
         # file_handler.close()
