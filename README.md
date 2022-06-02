@@ -35,7 +35,7 @@ python3 setup.py install
 
 ### Matlab Dependencies
 * Image Processing Toolbox
-* MATLAB Support for MinGW-w64 C/C++ Compiler 
+* MATLAB Support for MinGW-w64 C/C++ Compiler
 * MATLAB Compiler
 * MATLAB Compiler SDK
 
@@ -54,7 +54,7 @@ However, if the user prefers, a custom saving directory can also be used by spec
 Running the pipeline is done by running the following file from the `dss_recognition` directory:
 
 ```
-python dss_recognizer.py --dir_images <path_to_dir> --dir_save_predictions <path_to_dir>
+python3 dss_recognizer.py --dir_images <path_to_dir> --dir_save_predictions <path_to_dir>
 ```
 
 ## IAM Dataset
@@ -66,9 +66,9 @@ The python package dependencies can be found in [requirements.txt](dss_recogniti
 
 ### Running the final trained model to generate predictions
 * The predictions of the model will be saved in individual txt files i.e. one for each image, in a directory named `results`.
-The script [line_recognition/final_evaluation.py](line_recognition/final_evaluation.py) can be run in the following way.
+The script [line_recognition/final_iam_line_recognizer.py](line_recognition/final_iam_line_recognizer.py) can be run in the following way.
 ```
-python3 final_evaluation.py --dir_images <path_to_dir> --file_model <path_to_model_file>
+python3 final_iam_line_recognizer.py --dir_images <path_to_dir> --file_model <path_to_model_file>
 ```
 
 ## References

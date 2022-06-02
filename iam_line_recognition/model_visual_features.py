@@ -351,6 +351,7 @@ class GridGenerator(nn.Module):
 ########################################
 ######## Pyramid Pooling Block #########
 ########################################
+"""
 class PyramidPool(nn.Module):
     def __init__(self, pool_kernel_size, in_channels, out_channels):
         super().__init__()
@@ -397,3 +398,4 @@ class PyramidPoolBlock(nn.Module):
         x = torch.cat(pp_outputs, dim=1)
         x = self.final_layer(x)
         return x
+"""

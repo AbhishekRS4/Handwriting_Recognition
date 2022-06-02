@@ -1,25 +1,19 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-import random
-import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-%matplotlib inline
-import splitfolders
+from keras.preprocessing.image import ImageDataGenerator
 
-
-def training(name,input_size, batch_size):
+def training(name,model):
+    path_train_data = "char_recog/train"
+    path_test_data = "char_recog/val"
+    batch_size = 32
+    input_size = (64, 64)
     gen_train_data = ImageDataGenerator(rescale=1./255, width_shift_range=0.1,
         shear_range=0.15, zoom_range=0.1,
         channel_shift_range=10., horizontal_flip=False)
 
     gen_test_data = ImageDataGenerator(rescale=1./255)
-
-
     train_generator = gen_train_data.flow_from_directory(
-                path_train_data, 
-                target_size=input_size, 
+                path_train_data,
+                target_size=input_size,
                 batch_size=batch_size,
                 class_mode='categorical')
 
@@ -38,4 +32,4 @@ def training(name,input_size, batch_size):
         validation_data=val_generator,
         validation_steps=val_generator.samples // batch_size)
     model.save_weights(f"{name}.h5")
-    return weights_pretrain
+    return weights_train
