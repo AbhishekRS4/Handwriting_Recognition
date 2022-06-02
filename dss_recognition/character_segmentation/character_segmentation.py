@@ -16,6 +16,9 @@ def trim_top_bottom(image):
     first = min(zero_row_ind)
     last = max(zero_row_ind)
 
+    if first < 0: first = 0
+    if last > len(image[0]): last = len(image[0])
+
     return image[first:last, :]
 
 
@@ -26,7 +29,10 @@ def trim_sides(image):
     first = min(zero_col_ind)
     last = max(zero_col_ind)
 
-    return image[:, first-1:last+1]
+    if first < 0: first = 0
+    if last > len(image[0]): last = len(image[0])
+
+    return image[:, first:last]
 
 
 # this function takes the locations of the binarized valleys and splits the image on these points
@@ -169,8 +175,8 @@ def apply_histogram_segmentation(image, plot=False):
 
     # Plot binary graph TUNE FACTOR FOR DIFFERENT THRESHOLDING
     binarized = (bins > 0.9 * np.mean(bins)).astype(np.int_)
-    # binarized = np.insert(binarized, 0, 0)
-    # binarized = np.append(binarized, 0)
+    binarized = np.insert(binarized, 0, 0)
+    binarized = np.append(binarized, 0)
 
     if plot:
         fig, ax = plt.subplots(3, 1)
@@ -225,11 +231,11 @@ def character_segmentation():
 
 
 if __name__ == "__main__":
-    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_1.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
-    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
+    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_3.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_16_crop_9.jpg')
-    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_18_crop_12.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_18_crop_12.jpg')
     words = apply_histogram_segmentation(cv2.imread(file), True)
     for word in words:
         for char in word:
