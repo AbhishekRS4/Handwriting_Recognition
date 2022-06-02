@@ -122,7 +122,6 @@ def segment_characters(peaks, widths, image):
     characters = []
 
     # compute average width
-    print(widths)
     width_avg = np.mean(widths)
 
     # label peaks
@@ -201,9 +200,12 @@ def apply_histogram_segmentation(image, plot=False):
     # characters = split_image_to_peaks(image, binary_peaks, widths)
     characters = segment_characters(binary_peaks, widths[0], image)
 
-    # return in reversed order for right to left
+    # return right to left
     # return [i[::-1] for i in characters[::-1]]
+
+    # return left to right
     return characters
+
 
 # this is the main function loading from the crops folder
 def character_segmentation():
@@ -223,8 +225,8 @@ def character_segmentation():
 if __name__ == "__main__":
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
-    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
-    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_16_crop_9.jpg')
+    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_16_crop_9.jpg')
     words = apply_histogram_segmentation(cv2.imread(file), True)
     for word in words:
         for char in word:
