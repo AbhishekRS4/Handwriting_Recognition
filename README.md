@@ -33,7 +33,7 @@ python3 setup.py install
 cd "MATLABROOT/extern/engines/python"
 python3 setup.py install
 ```
-On Linux sudo may be required if one encounters an error related to permissions. In such a case, use the following
+On Linux `sudo` may be required if one encounters an error related to permissions. In such a case, use the following
 ```
 sudo python3 setup.py install
 ```
