@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as sp
-from task1 import dataloader_task1 as ds
+from dss_recognition import dataloader_task1 as ds
 
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,9 +27,9 @@ def split_image_to_peaks(image, peaks, widths):
         temp = image[:, (peaks[i] - widths[i] / 2).astype(int):(peaks[i] + widths[i] / 2).astype(int)]
         characters.append(temp)
 
-        cv2.imshow("split", temp)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("split", temp)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
     return characters
 
@@ -187,8 +187,9 @@ def apply_histogram_segmentation(image, plot=False):
     # characters = split_image_to_peaks(image, binary_peaks, widths)
     characters = segment_characters(binary_peaks, widths[0], image)
 
+    # return in reversed order for right to left
+    # return [i[::-1] for i in characters[::-1]]
     return characters
-
 
 # this is the main function loading from the crops folder
 def character_segmentation():
@@ -215,4 +216,4 @@ if __name__ == "__main__":
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
     file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_10.jpg')
-    _ = apply_histogram_segmentation(file, True)
+    _ = apply_histogram_segmentation(cv2.imread(file), True)

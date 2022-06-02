@@ -1,5 +1,5 @@
-import LineExtraction2.run_matlab_code as rmc
-from task1 import dataloader_task1 as ds
+from dss_recognition.line_segmentation.LineExtraction2 import run_matlab_code as rmc
+from dss_recognition import dataloader_task1 as ds
 import numpy as np
 import os
 import cv2
@@ -50,31 +50,36 @@ def get_segment_crop(img, tol=0, mask=None):
 
 
 # crop images to masks
-def extract_lines(file, masks, idx):
+def extract_lines(file, masks, idx=0, write_crops=False):
     image = cv2.imread(file)
+    lines = []
 
     # Remove background using bitwise-and operation
     i = 1
     for mask in masks:
         crop_im, crop_mask = get_segment_crop(image, mask=mask)
         result = apply_mask(crop_im, crop_mask)
+        lines.append(result)
 
-        # all crops are written to line_segmentation/crops/image_filenr_crop_cropnr.jpg
-        print("writing as: ", f"{get_subdirectory('crops')}\image_" + str(idx) + "_crop_" + str(i) + ".jpg")
-        cv2.imwrite(f"{get_subdirectory('crops')}\image_" + str(idx) + "_crop_" + str(i) + ".jpg", result)
+        if write_crops:
+            # all crops are written to line_segmentation/crops/image_filenr_crop_cropnr.jpg
+            print("writing as: ", f"{get_subdirectory('crops')}\image_" + str(idx) + "_crop_" + str(i) + ".jpg")
+            cv2.imwrite(f"{get_subdirectory('crops')}\image_" + str(idx) + "_crop_" + str(i) + ".jpg", result)
 
         i += 1
 
+    return lines
+
 
 # get masks from the input data and save them
-def get_cropped_images():
-    file_names = ds.read_binarized_images()
+def get_cropped_images(dir=None):
+    file_names = ds.read_binarized_images(dir)
     i = 1
 
     for file in file_names:
         print(file)
         separated_masks = rmc.extract_masks(file)
-        extract_lines(file, separated_masks, i)
+        _ = extract_lines(file, separated_masks, i, write_crops=True)
         # save_masks(separated_masks, i)
         i += 1
 

@@ -1,13 +1,16 @@
 import regex as re
 import os
 
-IMAGE_PATH = os.path.join(os.path.dirname(os.getcwd()), "data/task1/image-data")
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 # this function read the binarized images from the data/task1/image-data folder
-def read_binarized_images():
-    path = os.path.join(ROOT_DIR, "image-data")
+def read_binarized_images(dir=None):
+    if not dir:
+        path = os.path.join(ROOT_DIR, "image-data")
+    else:
+        path = dir
+
     images = []
 
     for filename in os.listdir(path):
