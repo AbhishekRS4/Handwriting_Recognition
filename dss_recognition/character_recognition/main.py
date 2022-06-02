@@ -5,7 +5,7 @@ import random
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-%matplotlib inline
+#%matplotlib inline
 import train
 import model
 import train
