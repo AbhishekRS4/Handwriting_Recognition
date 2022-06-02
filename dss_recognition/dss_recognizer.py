@@ -5,6 +5,36 @@ from line_segmentation import blob_line_mask_extraction as bme
 from line_segmentation.LineExtraction2 import run_matlab_code as rmc
 import dataloader_task1 as dl
 
+hebrew_characters = {
+    0:'alef',
+    1: 'ayin',
+    2: 'bet',
+    3: 'dalet',
+    4: 'gimel',
+    5: 'he',
+    6: 'het',
+    7: 'kaf',
+    8: 'kaf-final',
+    9: 'lamed',
+    10: 'mem',
+    11: 'mem-medial',
+    12: 'nun-final',
+    13: 'nun-medial',
+    14: 'pe',
+    15: 'pe-final',
+    16: 'qof',
+    17: 'resh',
+    18: 'samekh',
+    19: 'shin',
+    20: 'taw',
+    21: 'tet',
+    22: 'tsadi-final',
+    23: 'tsadi-medial',
+    24: 'waw',
+    25: 'yod',
+    26: 'zayin'
+    }
+
 hebrew_decimal_codes = {
     "alef": 1488,
     "ayin": 1506,
@@ -56,13 +86,29 @@ def start_dss_recognize(FLAGS):
 
             for word in segmented_chars:
                 print(word)
-                for char in word:
-                    # RIGHT TO LEFT CHARACTER PER CHARACTER
-                    pass
-                    # cv2.imshow("char", char)
-                    # cv2.waitKey(0)
-                    # cv2.destroyAllWindows()
+                expected_width = 64
+                expected_height = 64
 
+                segmented_characters_path = 'testing_model'
+                for subdir, dirs, files in os.walk(segmented_characters_path):
+                        predicted_char = []
+                        i = 0
+                        for f in files:
+                            original_image = cv2.imread(f"{subdir}/{f}")
+                            image = cv2.resize(original_image, (expected_width, expected_height), cv2.INTER_LINEAR)
+                            image = image.astype("float") / 255.0
+                            image = img_to_array(image)
+                            image = np.expand_dims(image, axis=0)
+                            prediction_char = model.predict(image)
+                            position_char = np.argmax(prediction_char)
+                            print(hebrew_characters[position_char])
+                            #if Viterbi > x:
+                            #prob.append(hebrew_characters) #np.argmax
+                            i = i + 1
+                        #need to reverse, since  hebrew characters are read from right to left
+                        #predicted_char.reverse()
+                
+                    
         #     file_handler.write("\n")
         # file_handler.close()
     return
