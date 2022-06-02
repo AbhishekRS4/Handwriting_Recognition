@@ -38,6 +38,9 @@ On Linux `sudo` may be required if one encounters an error related to permission
 sudo python3 setup.py install
 ```
 
+### Matlab Dependencies
+* Image Processing Toolbox
+
 ### Python Package dependencies
 * The python package dependencies can be found in [requirements.txt](requirements.txt)
 
