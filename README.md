@@ -25,13 +25,17 @@ by `matlabroot`.
 Open a command prompt and type the following commands:
 ```
 cd "MATLABROOT\extern\engines\python"
-python setup.py install
+python3 setup.py install
 ```
 
 #### Mac/Linux
 ```
 cd "MATLABROOT/extern/engines/python"
-python setup.py install
+python3 setup.py install
+```
+On Linux sudo may be required if one encounters an error related to permissions. In such a case, use the following
+```
+sudo python3 setup.py install
 ```
 
 ### Python Package dependencies
