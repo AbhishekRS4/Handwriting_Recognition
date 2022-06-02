@@ -12,7 +12,7 @@ import numpy as np
 
 
 
-def model():
+def model(load_weights=True):
     image_shape = (64,64,3)
     np.random.seed(1000)
     model = Sequential()
@@ -67,6 +67,7 @@ def model():
     model.add(Activation('softmax'))
 
     model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metrics=["accuracy"])
-    model.load_weights('alexnet.h5')
+    if load_weights:
+         model.load_weights('alexnet.h5')
 
     return model
