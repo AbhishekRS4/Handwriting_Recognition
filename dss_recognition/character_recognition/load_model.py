@@ -10,9 +10,10 @@ from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling
 from keras.layers.normalization import BatchNormalization
 import numpy as np
 
-image_shape = (64,64,3)
+
 
 def model():
+    image_shape = (64,64,3)
     np.random.seed(1000)
     model = Sequential()
     #First Convolutional layer
