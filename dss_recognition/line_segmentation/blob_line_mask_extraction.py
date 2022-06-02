@@ -1,5 +1,5 @@
-from dss_recognition.line_segmentation.LineExtraction2 import run_matlab_code as rmc
-from dss_recognition import dataloader_task1 as ds
+from LineExtraction2 import run_matlab_code as rmc
+import dataloader_task1 as ds
 import numpy as np
 import os
 import cv2
@@ -86,7 +86,7 @@ def get_cropped_images(dir=None):
 
 if __name__ == "__main__":
     # -- to run regular program
-    get_cropped_images()
+    get_cropped_images(dir="/home/abhishek/Desktop/RUG/hw_recognition/dss_test_images")
 
     # -- to run for single image
     # file = os.path.join(ROOT_DIR, 'image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
