@@ -1,10 +1,10 @@
 import argparse
 import numpy as np
+from tensorflow import keras
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 import cv2
 import os
-import keras
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D
 from keras.layers.normalization import BatchNormalization
