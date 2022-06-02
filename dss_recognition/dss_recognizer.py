@@ -1,8 +1,4 @@
 import argparse
-import os
-import cv2
-import numpy as np
-import scipy.signal as sp
 
 from character_segmentation import character_segmentation as cs
 from line_segmentation import blob_line_mask_extraction as bme

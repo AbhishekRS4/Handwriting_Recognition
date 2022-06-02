@@ -28,7 +28,7 @@ cd "MATLABROOT\extern\engines\python"
 python3 setup.py install
 ```
 
-#### Mac/Linux
+#### Mac
 ```
 cd "MATLABROOT/extern/engines/python"
 python3 setup.py install
@@ -40,6 +40,9 @@ sudo python3 setup.py install
 
 ### Matlab Dependencies
 * Image Processing Toolbox
+* (Windows) MATLAB Support for MinGW-w64 C/C++ Compiler 
+* MATLAB Compiler
+* MATLAB Compiler SDK
 
 ### Python Package dependencies
 * The python package dependencies can be found in [requirements.txt](requirements.txt)
