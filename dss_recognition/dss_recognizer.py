@@ -6,7 +6,7 @@ from keras.preprocessing.image import img_to_array
 from character_segmentation import character_segmentation as cs
 from line_segmentation import blob_line_mask_extraction as bme
 from line_segmentation.LineExtraction2 import run_matlab_code as rmc
-import dataloader_task1 as dl
+import line_segmentation.dataloader_task1 as dl
 from character_recognition import load_alexnet
 import numpy as np
 

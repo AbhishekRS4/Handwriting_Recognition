@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as sp
-from dss_recognition import dataloader_task1 as ds
+from dss_recognition.line_segmentation import dataloader_task1 as ds
 
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
