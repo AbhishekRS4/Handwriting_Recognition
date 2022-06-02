@@ -1,6 +1,6 @@
 __pycache__
 .ipynb_checkpoints
 .idea
-/data
-/line_segmentation/masks
-/line_segmentation/crops
+/task1/image-data
+/task1/line_segmentation/masks
+/task1/line_segmentation/crops

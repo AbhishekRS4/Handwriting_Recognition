@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as sp
+from task1 import dataloader_task1 as ds
+
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -144,8 +146,7 @@ def segment_characters(peaks, widths, image):
 
 
 # this function creates a histogram from the input image and determines the splits based on the binarized histogram
-def apply_histogram_segmentation(file, plot):
-    image = cv2.imread(file)
+def apply_histogram_segmentation(image, plot=False):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     _, image = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     image = trim_sides(image)
@@ -187,6 +188,28 @@ def apply_histogram_segmentation(file, plot):
     characters = segment_characters(binary_peaks, widths[0], image)
 
     return characters
+
+
+# this is the main function loading from the crops folder
+def character_segmentation():
+    segmented_images = []
+    images = ds.read_cropped_lines()
+
+    for image in images:
+        segmented_lines = []
+        for line in image:
+            image = cv2.imread(line)
+            segmented_lines.append(apply_histogram_segmentation(image))
+        segmented_images.append(segmented_lines)
+
+    return(segmented_images)
+
+
+# TODO:
+#  -    have return for crops as well
+#  -    return characters in bunches as words
+#  -    read from crops and separate by image number
+
 
 if __name__ == "__main__":
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_8.jpg')

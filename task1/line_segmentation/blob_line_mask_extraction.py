@@ -1,11 +1,9 @@
 import LineExtraction2.run_matlab_code as rmc
-import dataset_task1 as ds
+from task1 import dataloader_task1 as ds
 import numpy as np
 import os
 import cv2
 from PIL import Image
-import skimage
-
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +23,7 @@ def save_masks(masks, index):
         mask *= (255 / mask.max())
         img = Image.fromarray(mask.astype(np.uint8))
         # img.show()
-        img.save(f"{get_subdirectory('masks')}/image_" + str(index) + "_python_mask_" + str(i) + ".jpg")
+        img.save(f"{get_subdirectory('masks')}\image_" + str(index) + "_python_mask_" + str(i) + ".jpg")
         i += 1
 
     # array of binary masks
@@ -58,13 +56,12 @@ def extract_lines(file, masks, idx):
     # Remove background using bitwise-and operation
     i = 1
     for mask in masks:
-
         crop_im, crop_mask = get_segment_crop(image, mask=mask)
         result = apply_mask(crop_im, crop_mask)
 
         # all crops are written to line_segmentation/crops/image_filenr_crop_cropnr.jpg
-        # print("writing as: ", f"{get_subdirectory('crops')}/image_" + str(idx) + "_crop_" + str(i) + ".jpg")
-        cv2.imwrite(f"{get_subdirectory('crops')}/image_" + str(idx) + "_crop_" + str(i) + ".jpg", result)
+        print("writing as: ", f"{get_subdirectory('crops')}\image_" + str(idx) + "_crop_" + str(i) + ".jpg")
+        cv2.imwrite(f"{get_subdirectory('crops')}\image_" + str(idx) + "_crop_" + str(i) + ".jpg", result)
 
         i += 1
 
@@ -87,12 +84,12 @@ if __name__ == "__main__":
     get_cropped_images()
 
     # -- to run for single image
-    # file = os.path.join(ROOT_DIR, 'data\\task1\\image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
+    # file = os.path.join(ROOT_DIR, 'image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
     # separated_masks = rmc.extract_masks(file)
     # extract_lines(file, separated_masks, 0)
 
     # -- to get outlines on single image
-    # file = os.path.join(ROOT_DIR, 'data\\task1\\image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
+    # file = os.path.join(ROOT_DIR, 'image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
     # mask = rmc.extract_complete_mask(file)
     # np.save("masks/contour_test_mask", mask)
 
@@ -108,7 +105,7 @@ if __name__ == "__main__":
     # cv2.imwrite(f"{get_subdirectory('masks')}/complete_mask.jpg", result*255)
 
     # -- to test cropping
-    # file = os.path.join(ROOT_DIR, 'data\\task1\\image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
+    # file = os.path.join(ROOT_DIR, 'image-data\\P106-Fg002-R-C01-R01-binarized.jpg')
     # # separated_masks = rmc.extract_masks(file)
     #
     # # np.save("masks/cropping_test_masks", separated_masks)
