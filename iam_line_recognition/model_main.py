@@ -27,6 +27,7 @@ class HW_RNN_Seq2Seq(nn.Module):
         super().__init__()
         self.output_height = image_height // 32
 
+        self.dropout = nn.Dropout(p=0.25)
         self.map_visual_to_seq = nn.Linear(cnn_output_channels * self.output_height, num_feats_mapped_seq_hidden)
 
         self.b_lstm_1 = nn.LSTM(num_feats_mapped_seq_hidden, num_feats_seq_hidden, bidirectional=True)
@@ -43,8 +44,10 @@ class HW_RNN_Seq2Seq(nn.Module):
         # WBC
 
         seq = self.map_visual_to_seq(visual_feats)
+        seq = self.dropout(seq)
         lstm_1, _ = self.b_lstm_1(seq)
         lstm_2, _ = self.b_lstm_2(lstm_1)
+        lstm_2 = self.dropout(lstm_2)
 
         dense_output = self.final_dense(lstm_2)
         # [seq_len, B, num_classes]
