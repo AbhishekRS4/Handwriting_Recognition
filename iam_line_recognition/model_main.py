@@ -2,7 +2,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 
-from model_visual_features import ResNetFeatureExtractor, TPS_SpatialTransformerNetwork, PyramidPoolBlock
+from model_visual_features import ResNetFeatureExtractor, TPS_SpatialTransformerNetwork
 
 class HW_RNN_Seq2Seq(nn.Module):
     """

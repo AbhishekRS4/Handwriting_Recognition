@@ -348,10 +348,10 @@ class GridGenerator(nn.Module):
         return batch_P_prime  # batch_size x n x 2
 
 
+"""
 ########################################
 ######## Pyramid Pooling Block #########
 ########################################
-"""
 class PyramidPool(nn.Module):
     def __init__(self, pool_kernel_size, in_channels, out_channels):
         super().__init__()
