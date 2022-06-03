@@ -81,7 +81,7 @@ class HWRecogIAMDataset(Dataset):
                 transforms.ToPILImage(),
                 transforms.Resize((self.image_height, self.image_width), Image.BILINEAR),
                 transforms.RandomAffine(degrees=[-0.75, 0.75], translate=[0, 0.05], scale=[0.75, 1],
-                    shear=[-10, 15], interpolation=transforms.InterpolationMode.BILINEAR, fill=255,
+                    shear=[-35, 35], interpolation=transforms.InterpolationMode.BILINEAR, fill=255,
                 ),
                 transforms.ToTensor(),
                 transforms.Normalize(
