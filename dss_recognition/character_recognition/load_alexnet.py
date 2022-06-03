@@ -5,9 +5,32 @@ import numpy as np
 
 
 def model(load_weights=True):
+    
+    #Extra metrics to measure accuracy of the model
+    def recall_m(y_true, y_pred):
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+        recall = true_positives / (possible_positives + K.epsilon())
+        return recall
+
+
+    def precision_m(y_true, y_pred):
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+        precision = true_positives / (predicted_positives + K.epsilon())
+        return precision
+
+
+    def f1_m(y_true, y_pred):
+        precision = precision_m(y_true, y_pred)
+        recall = recall_m(y_true, y_pred)
+        return 2 * ((precision * recall) / (precision + recall + K.epsilon()))
+
+    #Image size
     image_shape = (64,64,3)
     np.random.seed(1000)
     model = Sequential()
+    
     #First Convolutional layer
     model.add(Conv2D(filters=96, input_shape=image_shape, kernel_size=(11,11), strides=(4,4),padding='valid'))
     model.add(Activation('relu'))
@@ -37,28 +60,28 @@ def model(load_weights=True):
     #Max Pooling
     model.add(MaxPooling2D(pool_size=(3,3), strides=(2,2), padding='same'))
 
-    #Passing it to a fully connected layer, here we do the flatten!
+    #Flaten to later pass to a Fully connected layer
     model.add(Flatten())
 
-    #First Fully Connected layer has 4096 neurons
+    #First FC
     model.add(Dense(300, input_shape=(64*64*3,)))
     model.add(Activation('relu'))
 
-    #Add dropout to prevent overfitting
+    #Add dropout to reduce overfit
     model.add(Dropout(0.5))
 
-    #Second Fully Connected layer
+    #Second FC
     model.add(Dense(200))
     model.add(Activation('relu'))
 
     #Add Dropout
     model.add(Dropout(0.5))
 
-    #Output layer
+    #Softmax to obtain 27 classes
     model.add(Dense(27))
     model.add(Activation('softmax'))
 
-    model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metrics=["accuracy"])
+    model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metrics=["accuracy", recall_m, precision_m, f1_m])
     if load_weights:
          model.load_weights('character_recognition/alexnet.h5')
 
