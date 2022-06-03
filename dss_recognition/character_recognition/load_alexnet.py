@@ -40,22 +40,22 @@ def model(load_weights=True):
     model.add(MaxPooling2D(pool_size=(3,3), strides=(2,2), padding='valid'))
 
     #Second Convolutional layer
-    model.add(Conv2D(filters=96, kernel_size=(5,5), strides=(1,1), padding='same'))
+    model.add(Conv2D(filters=256, kernel_size=(5,5), strides=(1,1), padding='same'))
     model.add(Activation('relu'))
 
     #Max Pooling
     model.add(MaxPooling2D(pool_size=(3,3), strides=(2,2), padding='valid'))
 
     #Third Convolutional layer
-    model.add(Conv2D(filters=16, kernel_size=(3,3), strides=(1,1), padding='same'))
+    model.add(Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), padding='same'))
     model.add(Activation('relu'))
 
     #Fourth Convolutional layer
-    model.add(Conv2D(filters=16, kernel_size=(3,3), strides=(1,1), padding='same'))
+    model.add(Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), padding='same'))
     model.add(Activation('relu'))
 
     #Fifth Convolutional layer
-    model.add(Conv2D(filters=22, kernel_size=(3,3), strides=(1,1), padding='same'))
+    model.add(Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), padding='same'))
     model.add(Activation('relu'))
 
     #Max Pooling
@@ -65,14 +65,14 @@ def model(load_weights=True):
     model.add(Flatten())
 
     #First FC
-    model.add(Dense(300, input_shape=(64*64*3,)))
+    model.add(Dense(4096, input_shape=(64*64*3,)))
     model.add(Activation('relu'))
 
     #Add dropout to reduce overfit
     model.add(Dropout(0.5))
 
     #Second FC
-    model.add(Dense(200))
+    model.add(Dense(4096))
     model.add(Activation('relu'))
 
     #Add Dropout
