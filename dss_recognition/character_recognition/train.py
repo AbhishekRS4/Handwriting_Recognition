@@ -25,7 +25,7 @@ def training(name,model):
 
 #reduce_lr = ReduceLROnPlateau(monitor='loss', factor=0.2, patience=2, min_lr=0.001)
 
-    weights_pretrain = model.fit_generator(
+    weights_train = model.fit_generator(
         train_generator,
         steps_per_epoch= train_generator.samples // batch_size,
         epochs=100,
