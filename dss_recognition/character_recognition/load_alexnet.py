@@ -65,7 +65,7 @@ def model(load_weights=True):
     model.add(Flatten())
 
     #First FC
-    model.add(Dense(4096, input_shape=(64*64*3,)))
+    model.add(Dense(4096))
     model.add(Activation('relu'))
 
     #Add dropout to reduce overfit
