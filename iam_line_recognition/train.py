@@ -231,17 +231,17 @@ def train_hw_recognizer(FLAGS):
     return
 
 def main():
-    learning_rate = 3e-4
+    learning_rate = 1
     # 3e-4 for Adam, 1 for Adadelta
-    weight_decay = 1e-4
+    weight_decay = 0
     # 1e-4 with Adam for both CRNN and STN-CRNN
-    # 1e-8 with Adadelta for CRNN and 0 for STN-CRNN
+    # 0 with Adadelta for CRNN and STN-CRNN
     batch_size = 64
     num_epochs = 100
     image_height = 32
     image_width = 768
     which_hw_model = "crnn"
-    which_optimizer = "adam"
+    which_optimizer = "adadelta"
     dir_dataset = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/"
 
     parser = argparse.ArgumentParser(
