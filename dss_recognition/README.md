@@ -1,5 +1,4 @@
-# Task - Dead Sea Scrolls
-
+# Task - Dead Sea Scrolls recognition
 ***
 
 ## Dead Sea Scrolls
@@ -32,7 +31,7 @@ python3 setup.py install
 * MATLAB Compiler SDK
 
 ### Python Package dependencies
-The python package dependencies can be found in [requirements.txt](dss_recognition/requirements.txt)
+The python package dependencies can be found in [requirements.txt](requirements.txt)
 
 ### Running the pipeline
 To run the full pipeline for the line segmentation, character segmentation and character recognition, first ensure the
