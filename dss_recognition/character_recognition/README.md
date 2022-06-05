@@ -8,8 +8,8 @@ The alexnet architecture was created based on http://dangminhthang.com/computer-
 * The model is located in "load_alexnet.py"
 * The training and testing is located at "train.py"
 * The alexnet.h5 are the weights saved after the training
-* To train the alexnet run the file "main.py" 
-**_NOTE:_** The dataset used was monkbrill renamed to character_training.
+* To train the alexnet run the file "main.py"
+* The dataset used was monkbrill renamed to character_training.
 
 
 ### Running the final trained model to generate predictions
