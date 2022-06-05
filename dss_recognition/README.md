@@ -47,3 +47,16 @@ Running the pipeline is done by running the following file from the `dss_recogni
 ```
 python3 dss_recognizer.py --dir_images <path_to_dir> --dir_save_predictions <path_to_dir> --line_segment_method <method>
 ```
+
+## References
+<a id="1">[1]</a>
+Ptak, R., Zygadlo, B., Unold, O. (2017). Projection-Based Text Line Segmentation with a Variable
+Threshold.
+International Journal of Applied Mathematics and Computer Science, 27, doi:10.1515/amcs-2017-0014.
+[paper link](https://www.researchgate.net/publication/315887219_Projection-Based_Text_Line_Segmentation_with_a_Variable_Threshold/fulltext/5909a119aca272f658fc7c62/Projection-Based-Text-Line-Segmentation-with-a-Variable-Threshold.pdf)
+
+<a id="2">[2]</a>
+Berat Kurar, B., Cohen, R., Droby, A., Rabaev, I. & El-Sana, J. (2020). Learning-Free Text Line Segmentation for Historical
+Handwritten Documents.
+Applied Sciences, 10, 8276; doi:10.3390/app10228276.
+[paper link](https://www.researchgate.net/profile/Berat-Barakat/publication/347109911_Learning-Free_Text_Line_Segmentation_for_Historical_Handwritten_Documents/links/6005e26a45851553a053b11c/Learning-Free-Text-Line-Segmentation-for-Historical-Handwritten-Documents.pdf)
