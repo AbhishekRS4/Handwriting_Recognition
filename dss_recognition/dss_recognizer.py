@@ -130,7 +130,7 @@ def main():
     parser.add_argument("--dir_save_predictions", default=dir_save_predictions,
         type=str, help="directory to save the predictions")
     parser.add_argument("--line_segment_method", default=line_segment_method,
-        type=str, help="Method for line segmentation, type 'blob' for blob-line method, type 'hhp' for horizontal histogram projection")
+        type=str, choices=["blob", "hhp"], help="Method for line segmentation, type 'blob' for blob-line method, type 'hhp' for horizontal histogram projection")
 
     FLAGS, unparsed = parser.parse_known_args()
     start_dss_recognize(FLAGS)
