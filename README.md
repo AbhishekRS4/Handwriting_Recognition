@@ -40,7 +40,7 @@ python3 setup.py install
 * MATLAB Compiler SDK
 
 ### Python Package dependencies
-The python package dependencies can be found in [requirements.txt](dss_recognition/requirements.txt)
+The python package dependencies can be found in [dss_recognition/requirements.txt](dss_recognition/requirements.txt)
 
 ### Running the pipeline
 To run the full pipeline for the line segmentation, character segmentation and character recognition, first ensure the
@@ -62,7 +62,7 @@ python3 dss_recognizer.py --dir_images <path_to_dir> --dir_save_predictions <pat
 Some code inspired from [https://github.com/GitYCC/crnn-pytorch](https://github.com/GitYCC/crnn-pytorch) and [https://github.com/kris314/deep-text-recognition-benchmark](https://github.com/kris314/deep-text-recognition-benchmark)
 
 ### Setup
-The python package dependencies can be found in [requirements.txt](dss_recognition/requirements.txt)
+The python package dependencies can be found in [iam_line_recognition/requirements.txt](iam_line_recognition/requirements.txt)
 
 ### Running the final trained model to generate predictions
 * The predictions of the model will be saved in individual txt files i.e. one for each image, in a directory named `results`.
