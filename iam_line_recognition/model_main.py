@@ -114,7 +114,7 @@ class STN_CRNN(nn.Module):
         """
         super().__init__()
         self.stn = TPS_SpatialTransformerNetwork(
-            20,
+            80,
             (image_height, image_width),
             (image_height, image_width),
             I_channel_num=3,
