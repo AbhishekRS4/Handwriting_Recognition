@@ -64,11 +64,21 @@ Some code inspired from [https://github.com/GitYCC/crnn-pytorch](https://github.
 ### Setup
 The python package dependencies can be found in [iam_line_recognition/requirements.txt](iam_line_recognition/requirements.txt)
 
-### Running the final trained model to generate predictions
-* The predictions of the model will be saved in individual txt files i.e. one for each image, in a directory named `results`.
-The script [line_recognition/final_iam_line_recognizer.py](line_recognition/final_iam_line_recognizer.py) can be run in the following way.
+### To train the model
+* To train the model run the following
 ```
-python3 final_iam_line_recognizer.py --dir_images <path_to_dir> --file_model <path_to_model_file>
+python3 train.py
+```
+* To list all the commandline arguments, run the following
+```
+python3 train.py --help
+```
+
+### Running the final trained model to generate predictions
+* The script [line_recognition/final_iam_line_recognizer.py](line_recognition/final_iam_line_recognizer.py) can be run in the following way. Use `--which_hw_model` option to specify the model to be used. To run CRNN use `--which_hw_model crnn` and to run STN-CRNN use `--which_hw_model stn_crnn`
+* The predictions of the model will be saved in individual .txt files i.e. one for each image, in a directory named `results_crnn` with CRNN model and `results_stn_crnn` with STN-CRNN model
+```
+python3 final_iam_line_recognizer.py --dir_images <full_path_to_dir> --which_hw_model <hw_model> --file_model <full_path_to_model_file>
 ```
 
 ## References
