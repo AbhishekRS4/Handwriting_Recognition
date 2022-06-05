@@ -86,7 +86,7 @@ def get_dataloader_for_evaluation(dir_images, image_height=32, image_width=768, 
     )
     return test_loader
 
-def final_eval(hw_model, device, test_loader, dir_images, dir_results="results"):
+def final_eval(hw_model, device, test_loader, dir_images, dir_results):
     """
     ---------
     Arguments
@@ -150,6 +150,7 @@ def test_hw_recognizer(FLAGS):
     else:
         print(f"unidentified option : {FLAGS.which_hw_model}")
         sys.exit(0)
+    dir_results = f"results_{FLAGS.which_hw_model}"
 
     # choose a device for evaluation
     if torch.cuda.is_available():
@@ -167,7 +168,7 @@ def test_hw_recognizer(FLAGS):
 
     # start the evaluation on the final test set
     print(f"final evaluation of handwriting recognition model {FLAGS.which_hw_model} started\n")
-    final_eval(hw_model, device, test_loader, FLAGS.dir_images)
+    final_eval(hw_model, device, test_loader, FLAGS.dir_images, dir_results)
     print(f"final evaluation of handwriting recognition model completed!!!!")
     return
 
@@ -176,7 +177,7 @@ def main():
     image_width = 768
     which_hw_model = "crnn"
     dir_images = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/img/"
-    file_model = "temp.pth"
+    file_model = "model_crnn/crnn_H_32_W_768_E_177.pth"
     save_predictions = 1
 
     parser = argparse.ArgumentParser(
@@ -184,13 +185,13 @@ def main():
     )
 
     parser.add_argument("--image_height", default=image_height,
-        type=int, help="image height to be used to train the model")
+        type=int, help="image height to be used to predict with the model")
     parser.add_argument("--image_width", default=image_width,
-        type=int, help="image width to be used to train the model")
+        type=int, help="image width to be used to predict with the model")
     parser.add_argument("--dir_images", default=dir_images,
         type=str, help="full directory path to directory containing images")
     parser.add_argument("--which_hw_model", default=which_hw_model,
-        type=str, choices=["crnn", "stn_crnn", "stn_pp_crnn"], help="which model to train")
+        type=str, choices=["crnn", "stn_crnn"], help="which model to be used for prediction")
     parser.add_argument("--file_model", default=file_model,
         type=str, help="full path to trained model file (.pth)")
     parser.add_argument("--save_predictions", default=save_predictions,
