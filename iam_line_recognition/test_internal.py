@@ -109,20 +109,20 @@ def main():
     image_width = 768
     which_hw_model = "crnn"
     dir_dataset = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/"
-    file_model = "temp.pth"
+    file_model = "model_crnn/crnn_H_32_W_768_E_177.pth"
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
     parser.add_argument("--image_height", default=image_height,
-        type=int, help="image height to be used to train the model")
+        type=int, help="image height to be used to predict with the model")
     parser.add_argument("--image_width", default=image_width,
-        type=int, help="image width to be used to train the model")
+        type=int, help="image width to be used to predict with the model")
     parser.add_argument("--dir_dataset", default=dir_dataset,
         type=str, help="full directory path to the dataset")
     parser.add_argument("--which_hw_model", default=which_hw_model,
-        type=str, choices=["crnn", "stn_crnn", "stn_pp_crnn"], help="which model to train")
+        type=str, choices=["crnn", "stn_crnn"], help="which model to be used for prediction")
     parser.add_argument("--file_model", default=file_model,
         type=str, help="full path to trained model file (.pth)")
 
