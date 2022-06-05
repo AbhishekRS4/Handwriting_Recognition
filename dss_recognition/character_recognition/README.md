@@ -16,5 +16,5 @@ The alexnet architecture was created based on http://dangminhthang.com/computer-
 * The training was done according to alexnet architecture, and can be run with the command: 
 The script [character_recognition/main.py](character_recognition/main.py) can be run in the following way.
 ```
-python3 main.py>
+python3 main.py
 ```
