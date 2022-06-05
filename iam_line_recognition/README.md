@@ -17,6 +17,9 @@ python3 train.py
 python3 train.py --help
 ```
 
+### Trained models
+* The trained models can be downloaded from [here](https://drive.google.com/drive/folders/1c-aNgqMDB0xYfyKXmcFNKcrN-ldd0UvO?usp=sharing)
+
 ### Running the final trained model to generate predictions
 * The script [line_recognition/final_iam_line_recognizer.py](line_recognition/final_iam_line_recognizer.py) can be run in the following way. Use `--which_hw_model` option to specify the model to be used. To run CRNN use `--which_hw_model crnn` and to run STN-CRNN use `--which_hw_model stn_crnn`
 * The predictions of the model will be saved in individual .txt files i.e. one for each image, in a directory named `results_crnn` with CRNN model and `results_stn_crnn` with STN-CRNN model
