@@ -6,6 +6,7 @@ from keras.preprocessing.image import img_to_array
 from character_segmentation import character_segmentation as cs
 from line_segmentation import blob_line_mask_extraction as bme
 from line_segmentation.LineExtraction2 import run_matlab_code as rmc
+from line_segmentation import horizontal_hist_projection as hhp
 import line_segmentation.dataloader_task1 as dl
 from character_recognition import load_alexnet
 import numpy as np
@@ -84,7 +85,10 @@ def start_dss_recognize(FLAGS):
         print(image_file)
         file_handler = open(os.path.join(FLAGS.dir_save_predictions, os.path.basename(image_file)+".txt"), encoding="utf-8", mode="w")
         separated_masks = rmc.extract_masks(image_file)
-        line_images = bme.extract_lines(image_file, separated_masks)
+        if FLAGS.line_segment_method == 'blob':
+            line_images = bme.extract_lines(image_file, separated_masks)
+        else:
+            line_images = hhp.extract_lines(image_file)
 
         for line_image in line_images:
             segmented_chars = cs.apply_histogram_segmentation(line_image)
@@ -116,7 +120,7 @@ def main():
     # dir_images = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/img/"
     dir_images = None
     dir_save_predictions = "results"
-
+    line_segment_method = "blob"
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -125,6 +129,8 @@ def main():
         type=str, help="full path to directory containing dead sea scroll images")
     parser.add_argument("--dir_save_predictions", default=dir_save_predictions,
         type=str, help="directory to save the predictions")
+    parser.add_argument("--line_segment_method", default=line_segment_method,
+        type=str, help="Method for line segmentation, type 'blob' for blob-line method, type 'hhp' for horizontal histogram projection")
 
     FLAGS, unparsed = parser.parse_known_args()
     start_dss_recognize(FLAGS)
