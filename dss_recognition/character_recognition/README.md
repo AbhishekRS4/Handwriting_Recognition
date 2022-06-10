@@ -20,4 +20,4 @@ python3 main.py
 ```
 
 ### Trained Weights file
-* The trained weights file named alexnet.h5 can be downloaded from [here](https://drive.google.com/drive/folders/1c-aNgqMDB0xYfyKXmcFNKcrN-ldd0UvO?usp=sharing)
+* The trained weights file named `alexnet.h5` can be downloaded from [here](https://drive.google.com/drive/folders/1c-aNgqMDB0xYfyKXmcFNKcrN-ldd0UvO?usp=sharing)
