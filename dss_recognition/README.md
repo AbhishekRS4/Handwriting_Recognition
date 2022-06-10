@@ -34,7 +34,7 @@ python3 setup.py install
 The python package dependencies can be found in [requirements.txt](requirements.txt)
 
 ### Trained Weights file
-* The trained weights file named alexnet.h5 can be downloaded from [here](https://drive.google.com/drive/folders/1c-aNgqMDB0xYfyKXmcFNKcrN-ldd0UvO?usp=sharing)
+* The trained weights file named `alexnet.h5` can be downloaded from [here](https://drive.google.com/drive/folders/1c-aNgqMDB0xYfyKXmcFNKcrN-ldd0UvO?usp=sharing)
 
 ### Running the pipeline
 To run the full pipeline for the line segmentation, character segmentation and character recognition, first ensure the
