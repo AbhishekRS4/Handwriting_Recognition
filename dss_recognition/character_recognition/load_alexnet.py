@@ -84,6 +84,6 @@ def model(load_weights=True):
 
     model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metrics=["accuracy", recall_m, precision_m, f1_m])
     if load_weights:
-         model.load_weights('character_recognition/alexnet.h5')
+         model.load_weights('alexnet.h5')
 
     return model
