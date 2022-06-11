@@ -234,7 +234,7 @@ def main():
     learning_rate = 1
     # 3e-4 for Adam, 1 for Adadelta
     weight_decay = 0
-    # 1e-4 with Adam for both CRNN and STN-CRNN
+    # 3e-5 with Adam for both CRNN and STN-CRNN
     # 0 with Adadelta for CRNN and STN-CRNN
     batch_size = 64
     num_epochs = 100
