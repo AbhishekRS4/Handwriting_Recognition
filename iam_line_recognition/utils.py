@@ -68,13 +68,20 @@ def greedy_decode(emission_log_prob, blank=0):
     labels = _reconstruct(labels, blank=blank)
     return labels
 
-def ctc_decode(log_probs, label_2_char=None, blank=0, beam_size=10):
+def ctc_decode(log_probs, which_ctc_decoder="beam_search", label_2_char=None, blank=0, beam_size=25):
     emission_log_probs = np.transpose(log_probs.cpu().numpy(), (1, 0, 2))
     # size of emission_log_probs: (batch, length, class)
 
     decoded_list = []
     for emission_log_prob in emission_log_probs:
-        decoded = beam_search_decode(emission_log_prob, blank=blank, beam_size=10)
+        if which_ctc_decoder == "beam_search":
+            decoded = beam_search_decode(emission_log_prob, blank=blank, beam_size=beam_size)
+        elif which_ctc_decoder == "greedy":
+            decoded = greedy_decode(emission_log_prob, blank=blank)
+        else:
+            print(f"unidentified option for which_ctc_decoder : {which_ctc_decoder}")
+            sys.exit(0)
+
         if label_2_char:
             decoded = [label_2_char[l] for l in decoded]
         decoded_list.append(decoded)
