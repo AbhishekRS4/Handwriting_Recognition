@@ -13,7 +13,7 @@ from utils import ctc_decode, compute_wer_and_cer_for_sample
 from dataset import HWRecogIAMDataset, split_dataset, get_dataloader_for_testing
 
 
-def test(hw_model, test_loader, device, list_test_files):
+def test(hw_model, test_loader, device, list_test_files, which_ctc_decoder="beam_search"):
     """
     ---------
     Arguments
@@ -26,6 +26,8 @@ def test(hw_model, test_loader, device, list_test_files):
         device to be used for running the evaluation
     list_test_files : list
         list of all the test files
+    which_ctc_decoder : str
+        string indicating which ctc decoder to use
     """
     hw_model.eval()
     num_test_samples = len(test_loader.dataset)
@@ -39,7 +41,7 @@ def test(hw_model, test_loader, device, list_test_files):
             count += 1
             images = images.to(device, dtype=torch.float)
             log_probs = hw_model(images)
-            pred_labels = ctc_decode(log_probs)
+            pred_labels = ctc_decode(log_probs, which_ctc_decoder=which_ctc_decoder)
             labels = labels.cpu().numpy().tolist()
 
             str_label = [HWRecogIAMDataset.LABEL_2_CHAR[i] for i in labels]
@@ -83,7 +85,7 @@ def test_hw_recognizer(FLAGS):
 
     num_classes = len(HWRecogIAMDataset.LABEL_2_CHAR) + 1
     print(f"task - handwriting recognition")
-    print(f"model: {FLAGS.which_hw_model}")
+    print(f"model: {FLAGS.which_hw_model}, ctc decoder: {FLAGS.which_ctc_decoder}")
     print(f"image height: {FLAGS.image_height}, image width: {FLAGS.image_width}")
     print(f"num test samples: {num_test_samples}")
 
@@ -100,7 +102,7 @@ def test_hw_recognizer(FLAGS):
 
     # start testing of the model on the internal set
     print(f"testing of handwriting recognition model {FLAGS.which_hw_model} started\n")
-    test(hw_model, test_loader, device, test_x)
+    test(hw_model, test_loader, device, test_x, FLAGS.which_ctc_decoder)
     print(f"testing handwriting recognition model completed!!!!")
     return
 
@@ -110,6 +112,7 @@ def main():
     which_hw_model = "crnn"
     dir_dataset = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/"
     file_model = "model_crnn/crnn_H_32_W_768_E_177.pth"
+    which_ctc_decoder = "beam_search"
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -123,6 +126,8 @@ def main():
         type=str, help="full directory path to the dataset")
     parser.add_argument("--which_hw_model", default=which_hw_model,
         type=str, choices=["crnn", "stn_crnn"], help="which model to be used for prediction")
+    parser.add_argument("--which_ctc_decoder", default=which_ctc_decoder,
+        type=str, choices=["beam_search", "greedy"], help="which ctc decoder to use")
     parser.add_argument("--file_model", default=file_model,
         type=str, help="full path to trained model file (.pth)")
 
