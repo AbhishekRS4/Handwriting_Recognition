@@ -8,12 +8,13 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 
+from logger_utils import CSVWriter
 from model_main import CRNN, STN_CRNN
 from utils import ctc_decode, compute_wer_and_cer_for_sample
 from dataset import HWRecogIAMDataset, split_dataset, get_dataloader_for_testing
 
 
-def test(hw_model, test_loader, device, list_test_files, which_ctc_decoder="beam_search"):
+def test(hw_model, test_loader, device, list_test_files, which_ctc_decoder="beam_search", save_prediction_stats=False):
     """
     ---------
     Arguments
@@ -28,6 +29,8 @@ def test(hw_model, test_loader, device, list_test_files, which_ctc_decoder="beam
         list of all the test files
     which_ctc_decoder : str
         string indicating which ctc decoder to use
+    save_prediction_stats : bool
+        whether to save prediction stats
     """
     hw_model.eval()
     num_test_samples = len(test_loader.dataset)
@@ -35,6 +38,12 @@ def test(hw_model, test_loader, device, list_test_files, which_ctc_decoder="beam
 
     count = 0
     list_test_cers, list_test_wers = [], []
+
+    if save_prediction_stats:
+        csv_writer = CSVWriter(
+            file_name="pred_stats.csv",
+            column_names=["file_name", "num_chars", "num_words", "cer", "wer"]
+        )
 
     with torch.no_grad():
         for images, labels, length_labels in test_loader:
@@ -52,15 +61,28 @@ def test(hw_model, test_loader, device, list_test_files, which_ctc_decoder="beam
             cer_sample, wer_sample = compute_wer_and_cer_for_sample(str_pred, str_label)
             list_test_cers.append(cer_sample)
             list_test_wers.append(wer_sample)
+
             print(f"progress: {count}/{num_test_samples}, test file: {list_test_files[count-1]}")
             print(f"{str_label} - label")
             print(f"{str_pred} - prediction")
             print(f"cer: {cer_sample:.3f}, wer: {wer_sample:.3f}\n")
+
+            if save_prediction_stats:
+                csv_writer.write_row([
+                    list_test_files[count-1],
+                    len(str_label),
+                    len(str_label.split(" ")),
+                    cer_sample,
+                    wer_sample,
+                ])
     list_test_cers = np.array(list_test_cers)
     list_test_wers = np.array(list_test_wers)
     mean_test_cer = np.mean(list_test_cers)
     mean_test_wer = np.mean(list_test_wers)
     print(f"test set - mean cer: {mean_test_cer:.3f}, mean wer: {mean_test_wer:.3f}\n")
+
+    if save_prediction_stats:
+        csv_writer.close()
     return
 
 def test_hw_recognizer(FLAGS):
@@ -102,7 +124,7 @@ def test_hw_recognizer(FLAGS):
 
     # start testing of the model on the internal set
     print(f"testing of handwriting recognition model {FLAGS.which_hw_model} started\n")
-    test(hw_model, test_loader, device, test_x, FLAGS.which_ctc_decoder)
+    test(hw_model, test_loader, device, test_x, FLAGS.which_ctc_decoder, bool(FLAGS.save_prediction_stats))
     print(f"testing handwriting recognition model completed!!!!")
     return
 
@@ -113,6 +135,7 @@ def main():
     dir_dataset = "/home/abhishek/Desktop/RUG/hw_recognition/IAM-data/"
     file_model = "model_crnn/crnn_H_32_W_768_E_177.pth"
     which_ctc_decoder = "beam_search"
+    save_prediction_stats = 0
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -130,6 +153,8 @@ def main():
         type=str, choices=["beam_search", "greedy"], help="which ctc decoder to use")
     parser.add_argument("--file_model", default=file_model,
         type=str, help="full path to trained model file (.pth)")
+    parser.add_argument("--save_prediction_stats", default=save_prediction_stats,
+        type=int, choices=[0, 1], help="save prediction stats (1 - yes, 0 - no)")
 
     FLAGS, unparsed = parser.parse_known_args()
     test_hw_recognizer(FLAGS)
