@@ -137,6 +137,8 @@ def segment_characters(peaks, widths, image):
         else:
             binary.append(1)
 
+    print(binary)
+
     # split labeled array based on maximum distance between two characters to avoid joining over long distance
     for i in range(len(binary) - 1):
         if ((peaks[i + 1] - widths[i + 1] / 2) - (peaks[i] + widths[i] / 2)) > max_gap:
@@ -194,8 +196,8 @@ def apply_histogram_segmentation(image, plot=False):
 
         ax[2].set_title(' binarized ')
         ax[2].stairs(binarized, fill=False, color="orange")
-        binary_valleys, _ = sp.find_peaks(np.multiply(binarized, -1))
-        ax[2].vlines(x=binary_valleys, ymin=0, ymax=1, colors="red")
+        # binary_valleys, _ = sp.find_peaks(np.multiply(binarized, -1))
+        # ax[2].vlines(x=binary_valleys, ymin=0, ymax=1, colors="red")
         ax[2].set_xlim([0, len(binarized)])
 
         plt.show()
@@ -231,14 +233,22 @@ def character_segmentation():
 
 
 if __name__ == "__main__":
-    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_1.jpg')
+    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_1.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_5.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_1_crop_6.jpg')
-    file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_3.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_3.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_2_crop_4.jpg')
+    # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_6_crop_5.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_16_crop_9.jpg')
     # file = os.path.join(ROOT_DIR, 'line_segmentation\crops\image_18_crop_12.jpg')
     words = apply_histogram_segmentation(cv2.imread(file), True)
+    i = 0
     for word in words:
         for char in word:
-            cv2.imshow("split", char)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            name = ROOT_DIR + "\line_segmentation\crops\\1_1char_" + str(i) + ".jpg"
+            print(name)
+            cv2.imwrite(name, char)
+            i += 1
+            # cv2.imshow("split", char)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()

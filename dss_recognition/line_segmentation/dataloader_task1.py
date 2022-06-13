@@ -7,6 +7,7 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # this function read the binarized images from the data/task1/image-data folder
 def read_binarized_images(dir=None):
     if not dir:
+        # path = os.path.join(ROOT_DIR, "test_im")
         path = os.path.join(ROOT_DIR, "image-data")
     else:
         path = dir
@@ -16,7 +17,9 @@ def read_binarized_images(dir=None):
     for filename in os.listdir(path):
         f = os.path.join(path, filename)
         # checking if it is a file
-        if os.path.isfile(f) and "binarized" in f:
+        # if os.path.isfile(f) and "binarized" in f:
+        #     images.append(f)
+        if os.path.isfile(f):
             images.append(f)
 
     return images

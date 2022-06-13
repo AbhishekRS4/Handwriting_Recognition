@@ -95,18 +95,21 @@ def start_dss_recognize(FLAGS):
             for word in segmented_chars:
                 for char in word:
                     i = 0
-                    original_image = cv2.cvtColor(char, cv2.COLOR_GRAY2RGB)
-                    image = cv2.resize(original_image, (expected_width, expected_height), cv2.INTER_LINEAR)
-                    image = image.astype("float") / 255.0
-                    image = img_to_array(image)
-                    image = np.expand_dims(image, axis=0)
-                    prediction_char = model.predict(image)
-                    position_char = np.argmax(prediction_char)
+                    try:
+                        original_image = cv2.cvtColor(char, cv2.COLOR_GRAY2RGB)
+                        image = cv2.resize(original_image, (expected_width, expected_height), cv2.INTER_LINEAR)
+                        image = image.astype("float") / 255.0
+                        image = img_to_array(image)
+                        image = np.expand_dims(image, axis=0)
+                        prediction_char = model.predict(image)
+                        position_char = np.argmax(prediction_char)
 
-                    pred_char = hebrew_characters[position_char]
-                    hebrew = hebrew_decimal_codes[pred_char]
+                        pred_char = hebrew_characters[position_char]
+                        hebrew = hebrew_decimal_codes[pred_char]
 
-                    file_handler.write(chr(hebrew))
+                        file_handler.write(chr(hebrew))
+                    except:
+                        pass
 
                     #if Viterbi > x:
                     #prob.append(hebrew_characters) #np.argmax
